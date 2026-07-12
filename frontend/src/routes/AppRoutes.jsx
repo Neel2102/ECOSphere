@@ -14,10 +14,6 @@ import ResetPassword from '../pages/auth/ResetPassword';
 // Dashboard
 import DashboardHome from '../pages/dashboard/DashboardHome';
 import Profile from '../pages/dashboard/Profile';
-import Inventory from '../pages/dashboard/Inventory';
-import Invoicing from '../pages/dashboard/Invoicing';
-import Customers from '../pages/dashboard/Customers';
-import SalesOrders from '../pages/dashboard/SalesOrders';
 import Onboarding from '../pages/dashboard/Onboarding';
 
 // Environmental
@@ -77,10 +73,6 @@ function AppRoutes() {
       >
         <Route index element={<DashboardHome />} />
         <Route path="profile" element={<Profile />} />
-        <Route path="inventory" element={<Inventory />} />
-        <Route path="invoicing" element={<Invoicing />} />
-        <Route path="customers" element={<Customers />} />
-        <Route path="sales" element={<SalesOrders />} />
         <Route path="onboarding" element={<Onboarding />} />
 
         {/* Environmental */}

@@ -14,6 +14,18 @@ async function create({ fullName, email, passwordHash, phone, role, otpCode, otp
   return rows[0];
 }
 
+// Admin onboarding: account is created verified and department-assigned,
+// so the new team member can log in immediately.
+async function createOnboarded({ fullName, email, passwordHash, phone, role, departmentId, gender }) {
+  const { rows } = await query(
+    `INSERT INTO users (full_name, email, password_hash, phone, role, department_id, gender, is_verified)
+     VALUES ($1, LOWER($2), $3, $4, $5, $6, $7, TRUE)
+     RETURNING ${PUBLIC_COLUMNS}`,
+    [fullName, email, passwordHash, phone, role, departmentId, gender]
+  );
+  return rows[0];
+}
+
 async function findByEmail(email) {
   const { rows } = await query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [email]);
   return rows[0] || null;
@@ -131,6 +143,7 @@ async function diversityByDepartment() {
 
 module.exports = {
   create,
+  createOnboarded,
   findByEmail,
   findById,
   setOtp,

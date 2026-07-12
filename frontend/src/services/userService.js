@@ -25,6 +25,18 @@ const userService = {
     const { data } = await api.get('/users');
     return data.data.users;
   },
+
+  // Admin only: onboard a manager/employee (created verified, ready to log in).
+  async createUser(payload) {
+    const { data } = await api.post('/users', payload);
+    return data.data.user;
+  },
+
+  // Admin only: change role / department / gender.
+  async updateUser(id, payload) {
+    const { data } = await api.patch(`/users/${id}`, payload);
+    return data.data.user;
+  },
 };
 
 export default userService;

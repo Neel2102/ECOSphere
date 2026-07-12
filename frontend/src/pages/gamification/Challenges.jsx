@@ -25,12 +25,22 @@ function StatusPill({ status }) {
   );
 }
 
+// Allowed lifecycle transitions (mirrors the backend rules).
+const TRANSITIONS = {
+  draft: ['active', 'archived'],
+  active: ['under_review', 'archived'],
+  under_review: ['completed', 'active', 'archived'],
+  completed: ['archived'],
+  archived: [],
+};
+
 function Challenges() {
   const { user } = useAuth();
   const canManage = ['admin', 'manager'].includes(user?.role);
   const [activeStatus, setActiveStatus] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
+  const [detailItem, setDetailItem] = useState(null);
   const [form, setForm] = useState({ title: '', description: '', xp: '', difficulty: 'medium', deadline: '', evidence_required: false, category_id: '' });
 
   const { data, loading, error, refetch } = useApi(
@@ -56,9 +66,13 @@ function Challenges() {
     refetch();
   });
 
-  const [changeStatus] = useMutation(async (id, status) => {
-    await gamificationService.changeStatus(id, status);
+  const [changeStatus, { error: statusError }] = useMutation(async (id, status) => {
+    const result = await gamificationService.changeStatus(id, status);
     refetch();
+    setDetailItem((current) =>
+      current && current.id === id ? { ...current, status } : current
+    );
+    return result;
   });
 
   const openEdit = (item) => {
@@ -144,7 +158,15 @@ function Challenges() {
       ) : (
         <div className="card-grid">
           {challenges.map((ch) => (
-            <div key={ch.id} className="activity-card" style={{ borderLeft: `4px solid ${STATUS_COLORS[ch.status] || 'transparent'}` }}>
+            <div
+              key={ch.id}
+              className="activity-card"
+              style={{ borderLeft: `4px solid ${STATUS_COLORS[ch.status] || 'transparent'}`, cursor: 'pointer' }}
+              onClick={() => setDetailItem(ch)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && setDetailItem(ch)}
+            >
               <div className="activity-card__title">🏆 {ch.title}</div>
               <div className="activity-card__meta">
                 XP: {ch.xp} • {ch.difficulty?.toUpperCase()}
@@ -153,7 +175,7 @@ function Challenges() {
                 <div className="activity-card__meta">📅 Deadline: {new Date(ch.deadline).toLocaleDateString()}</div>
               )}
               <div className="activity-card__meta">👥 {ch.participant_count || 0} joined</div>
-              <div className="activity-card__footer">
+              <div className="activity-card__footer" onClick={(e) => e.stopPropagation()}>
                 <StatusPill status={ch.status} />
                 <div style={{ display: 'flex', gap: 8 }}>
                   {!ch.joined_by_me && ch.status === 'active' && (
@@ -228,6 +250,108 @@ function Challenges() {
             <label htmlFor="evidReqC" style={{ fontSize: 13, color: 'var(--color-text)' }}>Evidence Required</label>
           </div>
         </form>
+      </Modal>
+
+      {/* Challenge details popup */}
+      <Modal
+        open={Boolean(detailItem)}
+        onClose={() => setDetailItem(null)}
+        title={detailItem ? `🏆 ${detailItem.title}` : ''}
+        size="md"
+        footer={
+          detailItem && (
+            <div className="modal-footer-btns">
+              {!detailItem.joined_by_me && detailItem.status === 'active' && (
+                <Button
+                  loading={joining}
+                  onClick={() => join(detailItem.id).then(() => setDetailItem({ ...detailItem, joined_by_me: true, participant_count: (detailItem.participant_count || 0) + 1 })).catch(() => {})}
+                >
+                  Join Challenge
+                </Button>
+              )}
+              {canManage && (
+                <Button variant="neutral" onClick={() => { setDetailItem(null); openEdit(detailItem); }}>
+                  Edit
+                </Button>
+              )}
+              {user?.role === 'admin' && (
+                <Button
+                  variant="danger"
+                  onClick={() => {
+                    if (window.confirm(`Delete challenge "${detailItem.title}"? This cannot be undone.`)) {
+                      gamificationService.deleteChallenge(detailItem.id)
+                        .then(() => { setDetailItem(null); refetch(); })
+                        .catch(() => {});
+                    }
+                  }}
+                >
+                  Delete
+                </Button>
+              )}
+              <Button variant="neutral" onClick={() => setDetailItem(null)}>Close</Button>
+            </div>
+          )
+        }
+      >
+        {detailItem && (
+          <div className="challenge-detail">
+            {statusError && <div className="page-error">⚠️ {statusError}</div>}
+
+            <div className="challenge-detail__grid">
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">Status</span>
+                <StatusPill status={detailItem.status} />
+              </div>
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">XP Reward</span>
+                <strong>{detailItem.xp} XP</strong>
+              </div>
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">Difficulty</span>
+                <strong style={{ textTransform: 'capitalize' }}>{detailItem.difficulty}</strong>
+              </div>
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">Deadline</span>
+                <strong>{detailItem.deadline ? new Date(detailItem.deadline).toLocaleDateString() : 'No deadline'}</strong>
+              </div>
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">Category</span>
+                <strong>{detailItem.category_name || '—'}</strong>
+              </div>
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">Participants</span>
+                <strong>{detailItem.participant_count || 0} joined</strong>
+              </div>
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">Evidence</span>
+                <strong>{detailItem.evidence_required ? 'Proof required' : 'Optional'}</strong>
+              </div>
+              <div className="challenge-detail__item">
+                <span className="challenge-detail__label">My participation</span>
+                <strong>{detailItem.joined_by_me ? '✓ Joined' : 'Not joined yet'}</strong>
+              </div>
+            </div>
+
+            <div className="challenge-detail__desc">
+              <span className="challenge-detail__label">Description</span>
+              <p>{detailItem.description || 'No description provided.'}</p>
+            </div>
+
+            {canManage && (TRANSITIONS[detailItem.status] || []).length > 0 && (
+              <div className="challenge-detail__lifecycle">
+                <span className="challenge-detail__label">Move to</span>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
+                  {TRANSITIONS[detailItem.status].map((next) => (
+                    <Button key={next} size="sm" variant="secondary"
+                      onClick={() => changeStatus(detailItem.id, next).catch(() => {})}>
+                      {next.replace(/_/g, ' ')}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </Modal>
     </div>
   );

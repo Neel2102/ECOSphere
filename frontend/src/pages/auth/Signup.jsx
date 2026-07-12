@@ -9,8 +9,7 @@ import '../../styles/auth/signup.css';
 
 // Admin accounts are provisioned separately - never offered at signup.
 const ROLE_OPTIONS = [
-  { value: 'admin', label: 'Organization Admin' },
-  { value: 'manager', label: 'Department Admin' },
+  { value: 'manager', label: 'Department Manager' },
   { value: 'employee', label: 'Employee' },
 ];
 

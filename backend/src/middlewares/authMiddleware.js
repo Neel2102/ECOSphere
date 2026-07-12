@@ -7,13 +7,16 @@ const ApiError = require('../utils/apiError');
 async function requireAuth(req, res, next) {
   try {
     const header = req.headers.authorization || '';
-    if (!header.startsWith('Bearer ')) {
+    // File downloads (report exports) can't set headers, so a ?token= query
+    // parameter is accepted as a fallback carrier for the same JWT.
+    const token = header.startsWith('Bearer ') ? header.slice(7) : req.query.token;
+    if (!token) {
       throw new ApiError(401, 'Authentication required.');
     }
 
     let payload;
     try {
-      payload = verifyJwt(header.slice(7));
+      payload = verifyJwt(token);
     } catch {
       throw new ApiError(401, 'Session expired or invalid. Please log in again.');
     }

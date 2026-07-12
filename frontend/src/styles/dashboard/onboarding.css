@@ -205,3 +205,175 @@
     display: none; /* Hide steps sidebar on narrow screens */
   }
 }
+
+/* ---- Onboarding: real-flow additions ---- */
+.onboarding-error {
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  border-radius: var(--radius-md);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.onboarding-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.onboarding-form-row--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.onboarding-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.onboarding-note {
+  padding: 12px 16px;
+  margin: 4px 0 16px;
+  font-size: 13px;
+  color: var(--color-text-soft);
+  background: var(--color-surface-soft);
+  border-radius: var(--radius-md);
+}
+
+.onboarding-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.onboarding-progress-label {
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+/* Live score tiles */
+.onboarding-score-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.onboarding-score {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-soft);
+  border-left: 4px solid var(--color-neutral);
+}
+
+.onboarding-score--env { border-left-color: var(--color-success); }
+.onboarding-score--soc { border-left-color: var(--color-secondary); }
+.onboarding-score--gov { border-left-color: var(--color-indigo); }
+.onboarding-score--gam { border-left-color: var(--color-warning); }
+.onboarding-score--all { border-left-color: var(--color-heading); }
+
+.onboarding-score__label {
+  display: block;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-soft);
+}
+
+.onboarding-score__value {
+  display: block;
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-heading);
+}
+
+.onboarding-score__value small {
+  font-size: 12px;
+  color: var(--color-text-faint);
+}
+
+/* Activity / reward cards */
+.onboarding-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+}
+
+.onboarding-activity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-raised-sm);
+}
+
+.onboarding-activity__title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--color-heading);
+}
+
+.onboarding-activity__meta {
+  font-size: 12px;
+  color: var(--color-text-soft);
+}
+
+/* Badge gallery */
+.onboarding-badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.onboarding-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 14px;
+  text-align: center;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-soft);
+  opacity: 0.65;
+}
+
+.onboarding-badge.is-earned {
+  opacity: 1;
+  background: var(--color-success-soft);
+  box-shadow: var(--shadow-raised-sm);
+}
+
+.onboarding-badge__icon { color: var(--color-warning); }
+.onboarding-badge__name { font-size: 13px; font-weight: bold; color: var(--color-heading); }
+.onboarding-badge__rule { font-size: 11px; color: var(--color-text-soft); }
+
+/* Inline file-upload button */
+.onboarding-file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-secondary);
+  background: var(--color-secondary-soft);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .onboarding-form-row,
+  .onboarding-form-row--3 {
+    grid-template-columns: 1fr;
+  }
+}

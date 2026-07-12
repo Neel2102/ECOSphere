@@ -8,70 +8,122 @@
 @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
 :root {
-  /* ---- Colors ---- */
-  --color-bg: #e9edf4;               /* primary: light grey base */
-  --color-surface: #ffffff;          /* primary: white surfaces */
-  --color-surface-soft: #f4f6fa;
-  --color-surface-dim: #eceff5;
+  /* ===========================
+      CORE COLOR SYSTEM
+  ============================ */
 
-  --color-secondary: #00b8ff;        /* secondary blue */
-  --color-secondary-dark: #009de0;
-  --color-secondary-soft: #e0f6ff;
+  /* Backgrounds */
+  --color-bg: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-surface-soft: #fafbfd;
+  --color-surface-dim: #eef2f5;
 
-  --color-accent: #ed2939;           /* imperial red */
-  --color-accent-dark: #c91f2e;
-  --color-accent-soft: #fdeaec;
+  /* Brand */
+  --color-secondary: #00B8FF;
+  --color-secondary-dark: #0098d6;
+  --color-secondary-soft: #e5f8ff;
 
-  --color-heading: #23293a;
-  --color-text: #3d4453;             /* dark grey body text */
-  --color-text-soft: #7d8593;
-  --color-text-faint: #aab1bd;
+  /* Accent */
+  --color-accent: #E63946; /* Imperial Red */
+  --color-accent-dark: #c92d39;
+  --color-accent-soft: #fdebec;
+
+  /* Typography */
+  --color-heading: #16181d;
+  --color-text: #4b5563;
+  --color-text-soft: #7b8794;
+  --color-text-faint: #b6c0ca;
   --color-white: #ffffff;
 
-  /* status palette (badges, alerts) */
-  --color-success: #1fa864;
-  --color-success-soft: #e4f6ec;
-  --color-warning: #eda23a;
-  --color-warning-soft: #fdf3e0;
+  /* ===========================
+      STATUS COLORS
+  ============================ */
+
+  --color-success: #28c76f;
+  --color-success-soft: #e7f9ef;
+
+  --color-warning: #ff9f43;
+  --color-warning-soft: #fff4e7;
+
   --color-danger: var(--color-accent);
   --color-danger-soft: var(--color-accent-soft);
+
   --color-info: var(--color-secondary);
-  --color-info-soft: var(--color-secondary-soft);
-  --color-neutral: #7d8593;
-  --color-neutral-soft: #edeff4;
+  --color-info-soft: #e5f8ff;
 
-  /* deep indigo used by the sales-orders table (reference design) */
-  --color-indigo: #2b3ce7;
-  --color-indigo-dark: #2230c4;
-  --color-indigo-soft: #eaecfd;
+  --color-neutral: #94a3b8;
+  --color-neutral-soft: #f1f5f9;
 
-  --color-overlay: rgba(35, 41, 58, 0.45);
-  --color-dark-bar: #23293a;         /* floating bulk-action bar */
-  --color-dark-bar-soft: #3a4156;
+  /* Optional Purple Accent */
+  --color-indigo: #6366f1;
+  --color-indigo-dark: #4f46e5;
+  --color-indigo-soft: #eef2ff;
 
-  /* ---- Fonts ---- */
-  --font-heading: 'Segoe UI', 'Segoe UI Variable Text', Tahoma, sans-serif;
+  /* ===========================
+      MODULE COLORS
+  ============================ */
+
+  --accent-env: #00B8FF;
+  --accent-soc: #6366f1;
+  --accent-gov: #E63946;
+  --accent-gam: #64748b;
+
+  /* ===========================
+      OVERLAYS
+  ============================ */
+
+  --color-overlay: rgba(20, 24, 32, 0.45);
+
+  --color-dark-bar: #181c24;
+  --color-dark-bar-soft: #2b3440;
+
+  /* ===========================
+      TYPOGRAPHY
+  ============================ */
+
+  --font-heading: 'Switzer', 'Segoe UI', Tahoma, sans-serif;
   --font-sidebar: 'Switzer', 'Segoe UI', Arial, sans-serif;
-  --font-body: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  --font-body: 'Switzer', 'Segoe UI', Arial, 'Helvetica Neue', sans-serif;
 
-  /* ---- Neumorphic shadows ---- */
-  --shadow-raised: 9px 9px 20px rgba(168, 178, 196, 0.55),
-                   -9px -9px 20px rgba(255, 255, 255, 0.95);
-  --shadow-raised-sm: 5px 5px 12px rgba(168, 178, 196, 0.5),
-                      -5px -5px 12px rgba(255, 255, 255, 0.9);
-  --shadow-inset: inset 5px 5px 10px rgba(168, 178, 196, 0.5),
-                  inset -5px -5px 10px rgba(255, 255, 255, 0.9);
-  --shadow-inset-sm: inset 2px 2px 6px rgba(168, 178, 196, 0.55),
-                     inset -2px -2px 6px rgba(255, 255, 255, 0.9);
-  --shadow-card: 0 10px 28px rgba(42, 50, 75, 0.08);
-  --shadow-float: 0 18px 40px rgba(23, 28, 46, 0.35);
+  /* ===========================
+      SHADOWS
+  ============================ */
 
-  /* ---- Shape & layout ---- */
+  --shadow-raised:
+    0 14px 30px rgba(15, 23, 42, 0.08),
+    0 2px 6px rgba(15, 23, 42, 0.04);
+
+  --shadow-raised-sm:
+    0 6px 16px rgba(15, 23, 42, 0.06),
+    0 1px 3px rgba(15, 23, 42, 0.04);
+
+  --shadow-inset:
+    inset 3px 3px 8px rgba(15, 23, 42, 0.06),
+    inset -3px -3px 8px rgba(255, 255, 255, 0.95);
+
+  --shadow-inset-sm:
+    inset 2px 2px 5px rgba(15, 23, 42, 0.06),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.95);
+
+  --shadow-card:
+    0 10px 28px rgba(15, 23, 42, 0.08);
+
+  --shadow-float:
+    0 20px 45px rgba(15, 23, 42, 0.18);
+
+  /* ===========================
+      BORDER RADIUS
+  ============================ */
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 26px;
   --radius-pill: 999px;
+
+  /* ===========================
+      LAYOUT
+  ============================ */
 
   --header-height: 68px;
   --sidebar-width: 236px;
@@ -105,9 +157,9 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-style: italic;
   color: var(--color-heading);
   font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.25;
 }
 

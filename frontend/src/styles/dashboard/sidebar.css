@@ -240,3 +240,25 @@
 .sidebar__group:not(:first-child) {
   margin-top: 2px;
 }
+
+/* ---- Module color-coded sidebar links ---- */
+.sidebar__link--env.is-active { color: var(--accent-env); }
+.sidebar__link--soc.is-active { color: var(--accent-soc); }
+.sidebar__link--gov.is-active { color: var(--accent-gov); }
+.sidebar__link--gam.is-active { color: var(--accent-gam); }
+
+.sidebar__link--env.is-active::before,
+.sidebar__link--soc.is-active::before,
+.sidebar__link--gov.is-active::before,
+.sidebar__link--gam.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.sidebar__link { position: relative; }

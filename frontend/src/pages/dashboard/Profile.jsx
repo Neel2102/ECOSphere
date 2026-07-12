@@ -16,14 +16,12 @@ const ROLE_BADGES = {
   admin: 'danger',
   manager: 'info',
   employee: 'success',
-  client: 'neutral',
 };
 
 const ROLE_LABELS = {
   admin: 'Organization Admin',
-  manager: 'Department Admin',
+  manager: 'Department Manager',
   employee: 'Employee',
-  client: 'Client',
 };
 
 const initialsOf = (name = '') =>

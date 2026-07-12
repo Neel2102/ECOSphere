@@ -6,6 +6,7 @@ const requireAuth = require('../middlewares/authMiddleware');
 const allowRoles = require('../middlewares/roleMiddleware');
 
 router.get('/', requireAuth, allowRoles('admin', 'manager'), userController.listUsers);
+router.post('/', requireAuth, allowRoles('admin'), userController.createUser);
 router.patch('/:id', requireAuth, allowRoles('admin'), userController.updateUser);
 
 module.exports = router;

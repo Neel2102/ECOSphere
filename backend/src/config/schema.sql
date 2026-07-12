@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
   email                   VARCHAR(255)  NOT NULL UNIQUE,
   password_hash           VARCHAR(100)  NOT NULL,
   phone                   VARCHAR(13)   NOT NULL CHECK (phone ~ '^\+91[0-9]{10}$'),
-  role                    VARCHAR(10)   NOT NULL DEFAULT 'client'
-                          CHECK (role IN ('admin', 'manager', 'employee', 'client')),
+  role                    VARCHAR(10)   NOT NULL DEFAULT 'employee'
+                          CHECK (role IN ('admin', 'manager', 'employee')),
   profile_image_path      VARCHAR(255),
   is_verified             BOOLEAN       NOT NULL DEFAULT FALSE,
   otp_code                VARCHAR(6),
@@ -22,6 +22,13 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_lower ON users (LOWER(email));
 CREATE INDEX IF NOT EXISTS idx_users_role ON users (role);
+
+-- Role model migration: exactly three roles remain
+-- (organization admin / department manager / employee).
+UPDATE users SET role = 'employee' WHERE role = 'client';
+ALTER TABLE users ALTER COLUMN role SET DEFAULT 'employee';
+ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
+ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('admin', 'manager', 'employee'));
 
 -- ========================== MASTER DATA ============================
 

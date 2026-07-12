@@ -1,7 +1,7 @@
 const { validate, isEmail, isOtp, isPhone, isStrongPassword } = require('./validate');
 
-const SIGNUP_ROLES = ['manager', 'employee', 'client'];
-const LOGIN_ROLES = ['admin', 'manager', 'employee', 'client'];
+const SIGNUP_ROLES = ['manager', 'employee'];
+const LOGIN_ROLES = ['admin', 'manager', 'employee'];
 
 const signup = validate((body) => {
   const errors = [];
@@ -16,7 +16,7 @@ const signup = validate((body) => {
   if (body.password !== body.confirmPassword) errors.push('Passwords do not match.');
   if (!isPhone(body.phone)) errors.push('Phone number must be exactly 10 digits.');
   if (!SIGNUP_ROLES.includes(body.role)) {
-    errors.push('Role must be one of: manager, employee, client.');
+    errors.push('Role must be manager or employee.');
   }
   return errors;
 });

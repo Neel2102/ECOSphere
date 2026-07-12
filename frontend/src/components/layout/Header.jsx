@@ -195,9 +195,8 @@ function Header({ onOpenMobileSidebar }) {
                 <span className="header__menu-role">
                   {{
                     admin: 'Organization Admin',
-                    manager: 'Department Admin',
+                    manager: 'Department Manager',
                     employee: 'Employee',
-                    client: 'Client',
                   }[user?.role] || user?.role}
                 </span>
               </div>

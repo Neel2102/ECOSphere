@@ -562,3 +562,45 @@
   color: var(--color-text-soft);
   font-size: 14px;
 }
+
+/* ---- Challenge details popup ---- */
+.challenge-detail__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+}
+
+.challenge-detail__item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.challenge-detail__label {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-faint);
+}
+
+.challenge-detail__desc {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-soft);
+  margin-bottom: 16px;
+}
+
+.challenge-detail__desc p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.55;
+}
+
+@media (max-width: 480px) {
+  .challenge-detail__grid { grid-template-columns: 1fr; }
+}

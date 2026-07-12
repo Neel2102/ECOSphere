@@ -1,6 +1,6 @@
 const { validate, isEmail, isOtp, isPhone, isStrongPassword } = require('./validate');
 
-const SIGNUP_ROLES = ['manager', 'employee'];
+const SIGNUP_ROLES = ['admin', 'manager', 'employee'];
 const LOGIN_ROLES = ['admin', 'manager', 'employee'];
 
 const signup = validate((body) => {

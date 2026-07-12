@@ -4,6 +4,7 @@ import environmentalService from '../../services/environmentalService';
 import Table from '../../components/common/Table/Table';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/common/module.css';
 
@@ -68,8 +69,8 @@ function EmissionFactors() {
             title: '',
             render: (r) => (
               <div style={{ display: 'flex', gap: 8 }}>
-                <Button variant="secondary" size="sm" onClick={() => openEdit(r)}>Edit</Button>
-                <Button variant="danger" size="sm" onClick={() => remove(r.id)} loading={removing}>Delete</Button>
+                <Button variant="ghost-edit" size="sm" className="btn--icon-only" onClick={() => openEdit(r)} title="Edit"><Icon name="edit" size={15} /></Button>
+                <Button variant="ghost-danger" size="sm" className="btn--icon-only" onClick={() => remove(r.id)} loading={removing} title="Delete"><Icon name="trash" size={15} /></Button>
               </div>
             ),
           },

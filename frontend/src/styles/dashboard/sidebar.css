@@ -10,13 +10,8 @@
   display: flex;
   flex-direction: column;
   z-index: 200;
-  transition: width var(--transition), transform var(--transition);
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-}
-
-/* Collapsed */
-.sidebar.is-collapsed {
-  width: var(--sidebar-width-collapsed);
 }
 
 /* Mobile: slide in from left */
@@ -25,11 +20,13 @@
   inset: 0;
   background: var(--color-overlay);
   z-index: 190;
+  animation: fade-in-up 0.15s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
+    width: var(--sidebar-width) !important;
   }
   .sidebar.is-mobile-open {
     transform: translateX(0);
@@ -45,6 +42,7 @@
   text-decoration: none;
   border-bottom: 1px solid var(--color-surface-dim);
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .sidebar__logo-img {
@@ -54,15 +52,11 @@
   height: auto;
   flex-shrink: 0;
   object-fit: contain;
-  transition: all var(--transition);
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar__app-name {
   display: none;
-}
-
-.sidebar.is-collapsed .sidebar__logo-img {
-  max-height: 32px;
 }
 
 /* ---- Nav ---- */
@@ -81,10 +75,11 @@
 
 /* ---- Top-level link ---- */
 .sidebar__link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 16px;
+  padding: 11px 16px;
   color: var(--color-text);
   font-family: var(--font-sidebar);
   font-size: 13.5px;
@@ -92,7 +87,7 @@
   text-decoration: none;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   margin-right: 12px;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition: background 0.15s ease, color 0.15s ease, padding 0.15s ease;
   white-space: nowrap;
 }
 
@@ -111,134 +106,73 @@
 .sidebar__link-icon {
   font-size: 17px;
   width: 24px;
+  min-width: 24px;
   text-align: center;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar__link-label {
   overflow: hidden;
   opacity: 1;
-  transition: opacity var(--transition);
+  transition: opacity 0.2s ease, width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 
-.sidebar.is-collapsed .sidebar__link-label {
-  opacity: 0;
-  width: 0;
-}
+/* Desktop Collapsible Sidebar Rules */
+@media (min-width: 1025px) {
+  /* Collapsed State */
+  .sidebar.is-collapsed {
+    width: var(--sidebar-width-collapsed);
+  }
 
-/* ---- Group button (collapsible section header) ---- */
-.sidebar__group-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 16px;
-  width: calc(100% - 12px);
-  color: var(--color-text-soft);
-  font-family: var(--font-sidebar);
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  background: none;
-  border: none;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  cursor: pointer;
-  text-align: left;
-  transition: background var(--transition-fast), color var(--transition-fast);
-  white-space: nowrap;
-  margin-top: 4px;
-}
+  .sidebar.is-collapsed .sidebar__logo-img {
+    max-height: 32px;
+  }
 
-.sidebar__group-btn:hover {
-  background: var(--color-surface-soft);
-  color: var(--color-heading);
-}
+  .sidebar.is-collapsed .sidebar__link-label {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+  }
 
-.sidebar__group-btn.is-active {
-  color: var(--color-secondary);
-}
+  /* Collapsed: center icons */
+  .sidebar.is-collapsed .sidebar__link {
+    justify-content: center;
+    margin-right: 0;
+    padding: 11px 0;
+    border-radius: var(--radius-md);
+    margin: 2px 10px;
+  }
 
-.sidebar__chevron {
-  margin-left: auto;
-  font-size: 13px;
-  transition: transform var(--transition-fast);
-  opacity: 1;
-}
-
-.sidebar__chevron.is-open {
-  transform: rotate(180deg);
-}
-
-.sidebar.is-collapsed .sidebar__chevron {
-  opacity: 0;
-}
-
-/* ---- Sub-navigation ---- */
-.sidebar__sub-nav {
-  padding-left: 20px;
-  margin-bottom: 4px;
-  animation: fade-in-up 0.18s ease;
-}
-
-.sidebar__sub-link {
-  display: block;
-  padding: 7px 14px;
-  color: var(--color-text-soft);
-  font-family: var(--font-sidebar);
-  font-size: 12.5px;
-  font-weight: 400;
-  text-decoration: none;
-  border-left: 2px solid var(--color-surface-dim);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.sidebar__sub-link:hover {
-  background: var(--color-secondary-soft);
-  color: var(--color-secondary);
-  border-left-color: var(--color-secondary);
-}
-
-.sidebar__sub-link.is-active {
-  color: var(--color-secondary);
-  font-weight: 600;
-  border-left-color: var(--color-secondary);
-  background: linear-gradient(90deg, var(--color-secondary-soft), transparent);
-}
-
-/* ---- Collapse toggle ---- */
-.sidebar__collapse {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 14px 0;
-  font-size: 18px;
-  color: var(--color-text-soft);
-  border-top: 1px solid var(--color-surface-dim);
-  background: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
-  cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.sidebar__collapse:hover {
-  background: var(--color-surface-soft);
-  color: var(--color-secondary);
-}
-
-/* Section divider */
-.sidebar__group {
-  border-top: 1px solid transparent;
-}
-
-.sidebar__group:not(:first-child) {
-  margin-top: 2px;
+  /* Tooltip on hover in collapsed state */
+  .sidebar.is-collapsed .sidebar__link {
+    position: relative;
+  }
+  .sidebar.is-collapsed .sidebar__link::after {
+    content: attr(title);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 6px 12px;
+    background: var(--color-dark-bar);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 300;
+    box-shadow: var(--shadow-card);
+  }
+  .sidebar.is-collapsed .sidebar__link:hover::after {
+    opacity: 1;
+  }
 }
 
 /* ---- Module color-coded sidebar links ---- */
@@ -261,4 +195,13 @@
   background: currentColor;
 }
 
-.sidebar__link { position: relative; }
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: var(--sidebar-width) !important;
+  }
+  .sidebar.is-mobile-open {
+    transform: translateX(0);
+  }
+}

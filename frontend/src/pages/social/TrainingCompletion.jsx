@@ -6,6 +6,7 @@ import userService from '../../services/userService';
 import Table from '../../components/common/Table/Table';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/common/module.css';
 
@@ -166,8 +167,8 @@ function TrainingCompletion() {
       title: 'Actions',
       render: (rec) => (
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button variant="neutral" size="sm" onClick={() => openEditRecord(rec)}>Edit</Button>
-          <Button variant="danger" size="sm" onClick={() => deleteRecord(rec.id)}>Delete</Button>
+          <Button variant="ghost-edit" size="sm" className="btn--icon-only" onClick={() => openEditRecord(rec)} title="Edit"><Icon name="edit" size={15} /></Button>
+          <Button variant="ghost-danger" size="sm" className="btn--icon-only" onClick={() => deleteRecord(rec.id)} title="Delete"><Icon name="trash" size={15} /></Button>
         </div>
       ),
     });

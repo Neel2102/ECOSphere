@@ -53,6 +53,24 @@ function EsgConfiguration() {
 
   const cfg = config || {};
 
+  const toggleItems = [
+    {
+      key: 'auto_emission_calculation',
+      label: 'Auto Emission Calculation',
+      desc: 'Derive carbon output automatically from operational values using emission factor equations',
+    },
+    {
+      key: 'evidence_requirement',
+      label: 'Evidence Requirement',
+      desc: 'Require employees to upload proof of evidence file before CSR activity participation can be approved',
+    },
+    {
+      key: 'badge_auto_award',
+      label: 'Badge Auto-Award',
+      desc: 'Automatically trigger badge checks and awards when employee XP or completed challenge counts change',
+    },
+  ];
+
   return (
     <div>
       {error && <div className="page-error">⚠️ {error}</div>}
@@ -63,7 +81,7 @@ function EsgConfiguration() {
       )}
       <div className="module-table-card" style={{ padding: 24 }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-heading)', marginBottom: 20 }}>ESG Score Weightings</h3>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 500 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="modal-form-field">
             <label>Environmental Weight (%)</label>
             <input required type="number" min="0" max="100" value={cfg.weight_environmental ?? 40} onChange={(e) => handleWeightChange('weight_environmental', e.target.value)} />
@@ -77,38 +95,22 @@ function EsgConfiguration() {
             <input required type="number" min="0" max="100" value={cfg.weight_governance ?? 30} onChange={(e) => handleWeightChange('weight_governance', e.target.value)} />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderTop: '1px solid var(--color-surface-dim)', marginTop: 8 }}>
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--color-heading)' }}>Auto Emission Calculation</div>
-              <div style={{ fontSize: 11.5, color: 'var(--color-text-soft)' }}>Derive carbon output automatically from operational values using emission factor equations</div>
+          {toggleItems.map((item) => (
+            <div key={item.key} className="settings-toggle-row">
+              <div className="settings-toggle-row__info">
+                <div className="settings-toggle-row__label">{item.label}</div>
+                <div className="settings-toggle-row__desc">{item.desc}</div>
+              </div>
+              <label className="settings-switch">
+                <input
+                  type="checkbox"
+                  checked={cfg[item.key] || false}
+                  onChange={(e) => setConfig((prev) => ({ ...prev, [item.key]: e.target.checked }))}
+                />
+                <span className="settings-switch__slider" />
+              </label>
             </div>
-            <input type="checkbox" checked={cfg.auto_emission_calculation || false}
-              onChange={(e) => setConfig((prev) => ({ ...prev, auto_emission_calculation: e.target.checked }))}
-              style={{ width: 18, height: 18, cursor: 'pointer' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderTop: '1px solid var(--color-surface-dim)' }}>
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--color-heading)' }}>Evidence Requirement</div>
-              <div style={{ fontSize: 11.5, color: 'var(--color-text-soft)' }}>Require employees to upload proof of evidence file before CSR activity participation can be approved</div>
-            </div>
-            <input type="checkbox" checked={cfg.evidence_requirement || false}
-              onChange={(e) => setConfig((prev) => ({ ...prev, evidence_requirement: e.target.checked }))}
-              style={{ width: 18, height: 18, cursor: 'pointer' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderTop: '1px solid var(--color-surface-dim)' }}>
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--color-heading)' }}>Badge Auto-Award</div>
-              <div style={{ fontSize: 11.5, color: 'var(--color-text-soft)' }}>Automatically trigger badge checks and awards when employee XP or completed challenge counts change</div>
-            </div>
-            <input type="checkbox" checked={cfg.badge_auto_award || false}
-              onChange={(e) => setConfig((prev) => ({ ...prev, badge_auto_award: e.target.checked }))}
-              style={{ width: 18, height: 18, cursor: 'pointer' }}
-            />
-          </div>
+          ))}
 
           <Button type="submit" variant="secondary" loading={saving} style={{ alignSelf: 'flex-start', marginTop: 12 }}>
             Save ESG Configuration

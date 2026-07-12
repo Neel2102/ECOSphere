@@ -14,20 +14,18 @@ export const ESG_MODULES = [
 
 // Flat list used by Header for page-title matching.
 export const NAV_ITEMS = [
-  { to: '/dashboard/onboarding', label: 'Onboarding' },
   { to: '/dashboard/reports', label: 'Reports' },
   { to: '/dashboard/settings', label: 'Settings' },
   { to: '/dashboard/profile', label: 'My Profile' },
   ...ESG_MODULES.map((m) => ({ to: m.base, label: m.label })),
 ];
 
-function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
+function Sidebar({ collapsed, mobileOpen, onCloseMobile, onHoverEnter, onHoverLeave }) {
   const { user } = useAuth();
   const canManage = ['admin', 'manager'].includes(user?.role);
 
   const links = [
     { to: '/dashboard', label: 'Dashboard', icon: 'home', end: true },
-    { to: '/dashboard/onboarding', label: 'Onboarding', icon: 'activity' },
     ...ESG_MODULES.map((m) => ({ to: m.base, label: m.label, icon: m.icon, accent: m.accent })),
     // Reports & Settings are management screens.
     ...(canManage
@@ -46,6 +44,8 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
 
       <aside
         className={`sidebar${collapsed ? ' is-collapsed' : ''}${mobileOpen ? ' is-mobile-open' : ''}`}
+        onMouseEnter={onHoverEnter}
+        onMouseLeave={onHoverLeave}
       >
         {/* Brand */}
         <NavLink to="/dashboard" className="sidebar__header" onClick={onCloseMobile}>
@@ -74,15 +74,6 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
             ))}
           </ul>
         </nav>
-
-        <button
-          type="button"
-          className="sidebar__collapse"
-          onClick={onToggleCollapsed}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? '›' : '‹'}
-        </button>
       </aside>
     </>
   );

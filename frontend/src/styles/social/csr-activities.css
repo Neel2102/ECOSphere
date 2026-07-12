@@ -1,2 +1,181 @@
-/* EcoSphere - CSR Activities page styles
-   Owner: kavya | Implemented in Phase 3 */
+/* ===== CSR Activities — Premium Card Design ===== */
+
+.csr-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .csr-card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .csr-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.csr-card {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised-sm);
+  border: 1px solid var(--color-surface-dim);
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.csr-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-raised);
+  border-color: var(--color-secondary);
+}
+
+/* Top accent bar */
+.csr-card__accent {
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-soc), var(--color-secondary));
+  flex-shrink: 0;
+}
+
+.csr-card--open .csr-card__accent {
+  background: linear-gradient(90deg, var(--color-success), var(--color-secondary));
+}
+
+.csr-card--skeleton {
+  padding: 24px;
+}
+
+.csr-card__body {
+  padding: 18px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.csr-card__top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.csr-card__evidence-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
+  border-radius: var(--radius-pill);
+}
+
+.csr-card__title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.csr-card__desc {
+  font-size: 12.5px;
+  color: var(--color-text-soft);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.csr-card__meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 2px;
+}
+
+.csr-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--color-text-soft);
+}
+
+.csr-card__meta-item--points {
+  color: var(--color-warning);
+  font-weight: 600;
+}
+
+.csr-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-surface-dim);
+}
+
+.csr-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.csr-card__joined {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.csr-card__manage-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* ---- Icon-only action buttons ---- */
+.action-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-surface-dim);
+  background: var(--color-surface);
+  color: var(--color-text-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.action-icon-btn:hover {
+  box-shadow: var(--shadow-raised-sm);
+}
+
+.action-icon-btn--edit:hover {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  background: var(--color-secondary-soft);
+}
+
+.action-icon-btn--delete:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}

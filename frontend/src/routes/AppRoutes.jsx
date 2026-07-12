@@ -14,7 +14,7 @@ import ResetPassword from '../pages/auth/ResetPassword';
 // Dashboard
 import DashboardHome from '../pages/dashboard/DashboardHome';
 import Profile from '../pages/dashboard/Profile';
-import Onboarding from '../pages/dashboard/Onboarding';
+
 
 // Environmental
 import Environmental from '../pages/environmental/Environmental';
@@ -73,7 +73,7 @@ function AppRoutes() {
       >
         <Route index element={<DashboardHome />} />
         <Route path="profile" element={<Profile />} />
-        <Route path="onboarding" element={<Onboarding />} />
+
 
         {/* Environmental */}
         <Route path="environmental" element={<Environmental />}>
@@ -134,8 +134,8 @@ function AppRoutes() {
         />
       </Route>
 
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

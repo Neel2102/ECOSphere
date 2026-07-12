@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { fileUrl } from '../../services/api';
 import Icon from '../common/Icon/Icon';
 import { NAV_ITEMS, ESG_MODULES } from './Sidebar';
-import notificationService from '../../services/notificationService';
 import '../../styles/dashboard/header.css';
 
 const initialsOf = (name = '') =>
@@ -34,37 +34,17 @@ function resolvePageTitle(pathname) {
 
 function Header({ onOpenMobileSidebar }) {
   const { user, logout } = useAuth();
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
   const location = useLocation();
   const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
 
   const menuRef = useRef(null);
   const notifRef = useRef(null);
 
   const pageTitle = resolvePageTitle(location.pathname);
-
-  // Fetch notifications
-  const fetchNotifs = () => {
-    if (!user) return;
-    notificationService
-      .listMine()
-      .then((data) => {
-        setNotifications(data?.items || []);
-        setUnreadCount(Number(data?.unread) || 0);
-      })
-      .catch((err) => console.error('[Header] Could not load notifications:', err));
-  };
-
-  useEffect(() => {
-    fetchNotifs();
-    // Poll every 30 seconds for live notifications in the hackathon platform
-    const interval = setInterval(fetchNotifs, 30000);
-    return () => clearInterval(interval);
-  }, [user]);
 
   // Click away listeners
   useEffect(() => {
@@ -82,21 +62,11 @@ function Header({ onOpenMobileSidebar }) {
   };
 
   const handleMarkAllRead = () => {
-    notificationService
-      .markAllRead()
-      .then(() => {
-        fetchNotifs();
-      })
-      .catch((err) => console.error('[Header] Mark all read failed:', err));
+    markAllRead();
   };
 
   const handleMarkRead = (id) => {
-    notificationService
-      .markRead(id)
-      .then(() => {
-        fetchNotifs();
-      })
-      .catch((err) => console.error('[Header] Mark read failed:', err));
+    markRead(id);
   };
 
   const avatarSrc = fileUrl(user?.profileImagePath);
@@ -128,7 +98,11 @@ function Header({ onOpenMobileSidebar }) {
             onClick={() => setNotifOpen((open) => !open)}
           >
             <Icon name="bell" size={20} />
-            {unreadCount > 0 && <span className="header__notif-dot" aria-hidden="true" />}
+            {unreadCount > 0 && (
+              <span className="header__notif-badge" aria-hidden="true">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </button>
 
           {notifOpen && (
@@ -143,7 +117,10 @@ function Header({ onOpenMobileSidebar }) {
               </div>
               <ul className="header__notif-list">
                 {notifications.length === 0 ? (
-                  <li className="header__notif-empty">No notifications yet.</li>
+                  <li className="header__notif-empty">
+                    <Icon name="bell" size={28} style={{ opacity: 0.3, marginBottom: 8 }} />
+                    <div>No notifications yet.</div>
+                  </li>
                 ) : (
                   notifications.map((item) => (
                     <li

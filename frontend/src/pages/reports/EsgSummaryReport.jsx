@@ -4,6 +4,7 @@ import reportService from '../../services/reportService';
 import settingsService from '../../services/settingsService';
 import Table from '../../components/common/Table/Table';
 import Button from '../../components/common/Button/Button';
+import { LuGlobe, LuDownload, LuSheet, LuFileText } from 'react-icons/lu';
 import '../../styles/common/module.css';
 
 function EsgSummaryReport() {
@@ -84,11 +85,11 @@ function EsgSummaryReport() {
       {/* Report Table */}
       <div className="module-table-card">
         <div className="module-table-card__header" style={{ display: 'flex', justifycontent: 'space-between', alignItems: 'center' }}>
-          <span className="module-table-card__title">🌍 ESG Executive Summary</span>
+          <span className="module-table-card__title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><LuGlobe size={16} /> ESG Executive Summary</span>
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="neutral" size="sm" onClick={() => handleDownload('csv')}>📥 CSV</Button>
-            <Button variant="neutral" size="sm" onClick={() => handleDownload('xlsx')}>📊 Excel</Button>
-            <Button variant="neutral" size="sm" onClick={() => handleDownload('pdf')}>📄 PDF</Button>
+            <Button variant="neutral" size="sm" onClick={() => handleDownload('csv')} iconLeft={<LuDownload size={14} />}>CSV</Button>
+            <Button variant="neutral" size="sm" onClick={() => handleDownload('xlsx')} iconLeft={<LuSheet size={14} />}>Excel</Button>
+            <Button variant="neutral" size="sm" onClick={() => handleDownload('pdf')} iconLeft={<LuFileText size={14} />}>PDF</Button>
           </div>
         </div>
         <Table columns={columns} data={rows} loading={!report} />

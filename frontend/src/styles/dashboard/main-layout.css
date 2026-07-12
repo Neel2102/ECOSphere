@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  transition: margin-left var(--transition);
+  transition: margin-left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-layout__content {
@@ -16,6 +16,7 @@
   min-width: 0;
 }
 
+/* Desktop: content offset by sidebar */
 @media (min-width: 1025px) {
   .main-layout__body {
     margin-left: var(--sidebar-width);
@@ -27,5 +28,27 @@
 
   .main-layout__content {
     padding: 12px 28px 40px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main-layout__body {
+    margin-left: 0;
+  }
+
+  .main-layout__content {
+    padding: 12px 20px 32px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .main-layout__body {
+    margin-left: 0;
+  }
+
+  .main-layout__content {
+    padding: 8px 12px 24px;
   }
 }

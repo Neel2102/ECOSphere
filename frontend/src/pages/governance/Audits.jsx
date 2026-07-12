@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import Table from '../../components/common/Table/Table';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import '../../styles/common/module.css';
 
 function StatusBadge({ status }) {
@@ -55,8 +56,8 @@ function Audits() {
       key: 'actions', title: '',
       render: (r) => canManage ? (
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button variant="secondary" size="sm" onClick={() => openEdit(r)}>Edit</Button>
-          <Button variant="danger" size="sm" onClick={() => remove(r.id)}>Delete</Button>
+          <Button variant="ghost-edit" size="sm" className="btn--icon-only" onClick={() => openEdit(r)} title="Edit"><Icon name="edit" size={15} /></Button>
+          <Button variant="ghost-danger" size="sm" className="btn--icon-only" onClick={() => remove(r.id)} title="Delete"><Icon name="trash" size={15} /></Button>
         </div>
       ) : null
     },

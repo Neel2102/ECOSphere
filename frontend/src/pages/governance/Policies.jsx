@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import Table from '../../components/common/Table/Table';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import '../../styles/common/module.css';
 
 function StatusBadge({ status }) {
@@ -56,8 +57,8 @@ function Policies() {
       render: (r) => (
         <div style={{ display: 'flex', gap: 8 }}>
           <Button variant="secondary" size="sm" loading={acking} onClick={() => acknowledge(r.id)}>Acknowledge</Button>
-          {canManage && <Button variant="neutral" size="sm" onClick={() => openEdit(r)}>Edit</Button>}
-          {canManage && <Button variant="danger" size="sm" onClick={() => remove(r.id)}>Delete</Button>}
+          {canManage && <Button variant="ghost-edit" size="sm" className="btn--icon-only" onClick={() => openEdit(r)} title="Edit"><Icon name="edit" size={15} /></Button>}
+          {canManage && <Button variant="ghost-danger" size="sm" className="btn--icon-only" onClick={() => remove(r.id)} title="Delete"><Icon name="trash" size={15} /></Button>}
         </div>
       )
     },

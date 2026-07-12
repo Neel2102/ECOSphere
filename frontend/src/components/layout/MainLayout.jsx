@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Header from './Header';
@@ -7,7 +7,8 @@ import Onboarding from '../../pages/dashboard/Onboarding';
 import '../../styles/dashboard/main-layout.css';
 
 function MainLayout() {
-  const [collapsed, setCollapsed] = useState(false);
+  // Desktop: sidebar is collapsed by default, expands on hover
+  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useAuth();
 
@@ -20,6 +21,19 @@ function MainLayout() {
     localStorage.setItem(onboardingKey, 'true');
     setOnboardingCompleted(true);
   };
+
+  const handleHoverEnter = useCallback(() => {
+    // Only expand on hover for desktop (check via matchMedia)
+    if (window.matchMedia('(min-width: 1025px)').matches) {
+      setCollapsed(false);
+    }
+  }, []);
+
+  const handleHoverLeave = useCallback(() => {
+    if (window.matchMedia('(min-width: 1025px)').matches) {
+      setCollapsed(true);
+    }
+  }, []);
 
   if (user && !onboardingCompleted) {
     return (
@@ -46,7 +60,8 @@ function MainLayout() {
         collapsed={collapsed}
         mobileOpen={mobileOpen}
         onCloseMobile={() => setMobileOpen(false)}
-        onToggleCollapsed={() => setCollapsed((current) => !current)}
+        onHoverEnter={handleHoverEnter}
+        onHoverLeave={handleHoverLeave}
       />
       <div className="main-layout__body">
         <Header onOpenMobileSidebar={() => setMobileOpen(true)} />

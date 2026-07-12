@@ -6,6 +6,7 @@ import userService from '../../services/userService';
 import gamificationService from '../../services/gamificationService';
 import Table from '../../components/common/Table/Table';
 import Button from '../../components/common/Button/Button';
+import { LuWrench, LuClipboardList, LuDownload, LuSheet, LuFileText } from 'react-icons/lu';
 import '../../styles/common/module.css';
 
 const MODULE_OPTIONS = [
@@ -87,7 +88,7 @@ function CustomReportBuilder() {
     <div>
       {/* Configuration Controls */}
       <div className="module-table-card" style={{ padding: 24, marginBottom: 20 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-heading)', marginBottom: 16 }}>🛠️ Custom Query Builder</h3>
+        <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-heading)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><LuWrench size={16} /> Custom Query Builder</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
           <div className="modal-form-field">
             <label>ESG Module Area *</label>
@@ -170,11 +171,11 @@ function CustomReportBuilder() {
       {/* Query Results */}
       <div className="module-table-card">
         <div className="module-table-card__header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span className="module-table-card__title">📋 Live Query Result Preview</span>
+          <span className="module-table-card__title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><LuClipboardList size={16} /> Live Query Result Preview</span>
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="neutral" size="sm" onClick={() => handleDownload('csv')}>📥 CSV</Button>
-            <Button variant="neutral" size="sm" onClick={() => handleDownload('xlsx')}>📊 Excel</Button>
-            <Button variant="neutral" size="sm" onClick={() => handleDownload('pdf')}>📄 PDF</Button>
+            <Button variant="neutral" size="sm" onClick={() => handleDownload('csv')} iconLeft={<LuDownload size={14} />}>CSV</Button>
+            <Button variant="neutral" size="sm" onClick={() => handleDownload('xlsx')} iconLeft={<LuSheet size={14} />}>Excel</Button>
+            <Button variant="neutral" size="sm" onClick={() => handleDownload('pdf')} iconLeft={<LuFileText size={14} />}>PDF</Button>
           </div>
         </div>
         <Table columns={columns} data={rows} loading={!report} />

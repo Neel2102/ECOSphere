@@ -4,6 +4,7 @@ import gamificationService from '../../services/gamificationService';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import '../../styles/common/module.css';
 
 const BADGE_EMOJIS = ['🏆', '🌟', '💚', '♻️', '🌱', '💡', '🤝', '🎯'];
@@ -64,7 +65,7 @@ function Badges() {
                   <div style={{ fontSize: 11, color: 'var(--color-text-faint)', marginTop: 4 }}>📋 {badge.criteria}</div>
                 )}
                 {canManage && (
-                  <Button variant="danger" size="sm" style={{ marginTop: 12 }} onClick={() => remove(badge.id)}>Delete</Button>
+                  <Button variant="ghost-danger" size="sm" className="btn--icon-only" style={{ marginTop: 12 }} onClick={() => remove(badge.id)} title="Delete"><Icon name="trash" size={15} /></Button>
                 )}
               </div>
             ))}

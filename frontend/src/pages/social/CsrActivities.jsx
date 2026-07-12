@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { FiMapPin, FiStar, FiUsers, FiTag, FiCalendar, FiCheck } from 'react-icons/fi';
 import { useApi, useMutation } from '../../hooks/useApi';
 import socialService from '../../services/socialService';
 import settingsService from '../../services/settingsService';
-import Table from '../../components/common/Table/Table';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/common/module.css';
+import '../../styles/social/csr-activities.css';
 
 function StatusBadge({ status }) {
   return <span className={`status-badge status-badge--${status}`}>{status}</span>;
@@ -79,47 +81,93 @@ function CsrActivities() {
 
       {/* Activity Cards */}
       {loading ? (
-        <div className="card-grid">
+        <div className="csr-card-grid">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="activity-card">
+            <div key={i} className="csr-card csr-card--skeleton">
               <div className="skeleton skeleton--text" style={{ height: 18, width: '70%' }} />
-              <div className="skeleton skeleton--text" style={{ height: 14, width: '50%' }} />
+              <div className="skeleton skeleton--text" style={{ height: 14, width: '50%', marginTop: 10 }} />
+              <div className="skeleton skeleton--text" style={{ height: 14, width: '40%', marginTop: 6 }} />
             </div>
           ))}
         </div>
       ) : (
-        <div className="card-grid">
+        <div className="csr-card-grid">
           {activities.map((activity) => (
-            <div key={activity.id} className="activity-card">
-              <div className="activity-card__title">
-                {activity.category_name ? `🏷️ ` : '🤝 '}{activity.title}
-              </div>
-              <div className="activity-card__meta">
-                👥 {activity.joined_count || 0} joined
-                {activity.evidence_required && ' • Evidence Required'}
-              </div>
-              {activity.location && (
-                <div className="activity-card__meta">📍 {activity.location}</div>
-              )}
-              {activity.points > 0 && (
-                <div className="activity-card__meta">⭐ {activity.points} pts</div>
-              )}
-              <div className="activity-card__footer">
-                <StatusBadge status={activity.status} />
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {!activity.joined_by_me && activity.status === 'open' && (
-                    <Button variant="secondary" size="sm" loading={joining} onClick={() => join(activity.id)}>
-                      Join
-                    </Button>
+            <div key={activity.id} className={`csr-card${activity.status === 'open' ? ' csr-card--open' : ''}`}>
+              <div className="csr-card__accent" />
+              <div className="csr-card__body">
+                <div className="csr-card__top-row">
+                  <StatusBadge status={activity.status} />
+                  {activity.evidence_required && (
+                    <span className="csr-card__evidence-badge">Evidence Required</span>
                   )}
-                  {activity.joined_by_me && (
-                    <span style={{ fontSize: 12, color: 'var(--color-success)', fontWeight: 600 }}>✓ Joined</span>
+                </div>
+                <h4 className="csr-card__title">{activity.title}</h4>
+                {activity.description && (
+                  <p className="csr-card__desc">{activity.description}</p>
+                )}
+                <div className="csr-card__meta-grid">
+                  {activity.category_name && (
+                    <div className="csr-card__meta-item">
+                      <FiTag size={13} />
+                      <span>{activity.category_name}</span>
+                    </div>
                   )}
+                  <div className="csr-card__meta-item">
+                    <FiUsers size={13} />
+                    <span>{activity.joined_count || 0} joined</span>
+                  </div>
+                  {activity.location && (
+                    <div className="csr-card__meta-item">
+                      <FiMapPin size={13} />
+                      <span>{activity.location}</span>
+                    </div>
+                  )}
+                  {activity.points > 0 && (
+                    <div className="csr-card__meta-item csr-card__meta-item--points">
+                      <FiStar size={13} />
+                      <span>{activity.points} pts</span>
+                    </div>
+                  )}
+                  {activity.activity_date && (
+                    <div className="csr-card__meta-item">
+                      <FiCalendar size={13} />
+                      <span>{new Date(activity.activity_date).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="csr-card__footer">
+                  <div className="csr-card__actions">
+                    {!activity.joined_by_me && activity.status === 'open' && (
+                      <Button variant="secondary" size="sm" loading={joining} onClick={() => join(activity.id)}>
+                        Join
+                      </Button>
+                    )}
+                    {activity.joined_by_me && (
+                      <span className="csr-card__joined">
+                        <FiCheck size={14} /> Joined
+                      </span>
+                    )}
+                  </div>
                   {canManage && (
-                    <>
-                      <Button variant="neutral" size="sm" onClick={() => openEdit(activity)}>Edit</Button>
-                      <Button variant="danger" size="sm" onClick={() => remove(activity.id)}>Del</Button>
-                    </>
+                    <div className="csr-card__manage-actions">
+                      <button
+                        type="button"
+                        className="action-icon-btn action-icon-btn--edit"
+                        title="Edit"
+                        onClick={() => openEdit(activity)}
+                      >
+                        <Icon name="edit" size={15} />
+                      </button>
+                      <button
+                        type="button"
+                        className="action-icon-btn action-icon-btn--delete"
+                        title="Delete"
+                        onClick={() => remove(activity.id)}
+                      >
+                        <Icon name="trash" size={15} />
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>

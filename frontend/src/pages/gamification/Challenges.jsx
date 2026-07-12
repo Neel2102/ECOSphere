@@ -5,6 +5,7 @@ import settingsService from '../../services/settingsService';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import '../../styles/common/module.css';
 
 const STATUSES = ['draft', 'active', 'under_review', 'completed', 'archived'];
@@ -187,7 +188,7 @@ function Challenges() {
                     <span style={{ fontSize: 12, color: 'var(--color-success)', fontWeight: 600 }}>✓ Joined</span>
                   )}
                   {canManage && (
-                    <Button variant="neutral" size="sm" onClick={() => openEdit(ch)}>Edit</Button>
+                    <Button variant="ghost-edit" size="sm" className="btn--icon-only" onClick={() => openEdit(ch)} title="Edit"><Icon name="edit" size={15} /></Button>
                   )}
                 </div>
               </div>

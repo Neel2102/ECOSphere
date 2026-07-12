@@ -39,18 +39,25 @@
 
 .dash-score-card:hover {
   box-shadow: var(--shadow-raised);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: rgba(0, 184, 255, 0.25);
 }
 
 .dash-score-card__header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.dash-score-card__icon { 
-  font-size: 20px;
+.dash-score-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-raised-sm);
 }
 
 .dash-score-card__label {
@@ -63,7 +70,6 @@
 
 .dash-score-card__value {
   font-family: var(--font-heading);
-  font-style: italic;
   font-size: 38px;
   font-weight: 800;
   line-height: 1;
@@ -92,22 +98,24 @@
 
 /* ---- Count Pills ---- */
 .dash-counts {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
-  flex-wrap: wrap;
 }
+
+@media (max-width: 1024px) { .dash-counts { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .dash-counts { grid-template-columns: 1fr; } }
 
 .dash-count-pill {
   background: var(--color-surface);
-  border-radius: var(--radius-pill);
-  padding: 10px 22px;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   gap: 12px;
   box-shadow: var(--shadow-raised-sm);
   border: 1px solid var(--color-surface-dim);
-  border-left: 5px solid var(--color-success);
-  min-width: 150px;
+  border-left: 4px solid var(--color-success);
   transition: all var(--transition);
 }
 
@@ -122,7 +130,6 @@
 
 .dash-count-pill__num {
   font-family: var(--font-heading);
-  font-style: italic;
   font-size: 22px;
   font-weight: 700;
   color: var(--color-heading);
@@ -290,7 +297,7 @@
   background: var(--color-surface-soft);
 }
 
-/* ---- Quick Actions ---- */
+/* ---- Quick Actions — Professional card-style buttons ---- */
 .dash-quick-actions {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -299,7 +306,7 @@
   border: 1px solid var(--color-surface-dim);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   transition: all var(--transition);
 }
 
@@ -311,28 +318,61 @@
   font-size: 14.5px;
   font-weight: 700;
   color: var(--color-heading);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .dash-qa__btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
-  padding: 14px 18px;
+  padding: 14px 16px;
   border-radius: var(--radius-md);
   font-size: 13.5px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   border: none;
   text-align: left;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dash-qa__btn:hover {
-  transform: translateY(-2px);
+  transform: translateX(4px);
   box-shadow: var(--shadow-raised-sm);
 }
 
+.dash-qa__btn:active {
+  transform: translateX(2px);
+}
+
+.dash-qa__btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
+.dash-qa__btn-label {
+  flex: 1;
+}
+
+.dash-qa__btn-arrow {
+  opacity: 0.6;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.dash-qa__btn:hover .dash-qa__btn-arrow {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
 .dash-qa__btn--green {
-  background: linear-gradient(135deg, var(--color-success), #17c871);
+  background: linear-gradient(135deg, #28c76f, #1fa85c);
   color: #fff;
 }
 
@@ -347,7 +387,30 @@
   border: 1px solid var(--color-surface-dim);
 }
 
+.dash-qa__btn--grey .dash-qa__btn-icon {
+  background: var(--color-surface-dim);
+}
+
 .dash-qa__btn--orange {
   background: linear-gradient(135deg, var(--color-warning), #e8941f);
   color: #fff;
+}
+
+/* ---- Responsive adjustments ---- */
+@media (max-width: 480px) {
+  .dash-score-card {
+    padding: 18px;
+  }
+  .dash-score-card__value {
+    font-size: 30px;
+  }
+  .dash-chart-card {
+    padding: 16px;
+  }
+  .dash-activity {
+    padding: 16px;
+  }
+  .dash-quick-actions {
+    padding: 16px;
+  }
 }

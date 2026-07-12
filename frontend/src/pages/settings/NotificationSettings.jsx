@@ -64,22 +64,26 @@ function NotificationSettings() {
 
       <div className="module-table-card" style={{ padding: 24 }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-heading)', marginBottom: 20 }}>Channel & Notification Routing</h3>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 600 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {TOGGLES.map((t) => (
-            <div key={t.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid var(--color-surface-dim)' }}>
-              <div style={{ paddingRight: 16 }}>
-                <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--color-heading)' }}>{t.label}</div>
-                <div style={{ fontSize: 11.5, color: 'var(--color-text-soft)', marginTop: 2 }}>{t.desc}</div>
+            <div key={t.key} className="settings-toggle-row">
+              <div className="settings-toggle-row__info">
+                <div className="settings-toggle-row__label">{t.label}</div>
+                <div className="settings-toggle-row__desc">{t.desc}</div>
               </div>
-              <input type="checkbox" checked={cfg[t.key] || false}
-                onChange={(e) => handleToggle(t.key, e.target.checked)}
-                style={{ width: 18, height: 18, cursor: 'pointer', flexShrink: 0 }}
-              />
+              <label className="settings-switch">
+                <input
+                  type="checkbox"
+                  checked={cfg[t.key] || false}
+                  onChange={(e) => handleToggle(t.key, e.target.checked)}
+                />
+                <span className="settings-switch__slider" />
+              </label>
             </div>
           ))}
 
           <Button type="submit" variant="secondary" loading={saving} style={{ alignSelf: 'flex-start', marginTop: 16 }}>
-            Save Channels Settings
+            Save Channel Settings
           </Button>
         </form>
       </div>

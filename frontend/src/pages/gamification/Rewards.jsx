@@ -4,6 +4,7 @@ import gamificationService from '../../services/gamificationService';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
+import Icon from '../../components/common/Icon/Icon';
 import '../../styles/common/module.css';
 
 function Rewards() {
@@ -86,7 +87,7 @@ function Rewards() {
                     Redeem
                   </Button>
                   {canManage && (
-                    <Button variant="danger" size="sm" onClick={() => remove(reward.id)}>Delete</Button>
+                    <Button variant="ghost-danger" size="sm" className="btn--icon-only" onClick={() => remove(reward.id)} title="Delete"><Icon name="trash" size={15} /></Button>
                   )}
                 </div>
               </div>

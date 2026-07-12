@@ -1,0 +1,122 @@
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  padding: 32px 16px;
+  background: var(--color-bg);
+}
+
+.auth-layout__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-layout__logo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-family: var(--font-sidebar);
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-white);
+  background: var(--color-accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised-sm);
+}
+
+.auth-layout__logo-dot {
+  position: absolute;
+  right: 7px;
+  bottom: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--color-secondary);
+}
+
+.auth-layout__name {
+  font-family: var(--font-sidebar);
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-heading);
+}
+
+.auth-layout__card {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.auth-layout__card--wide {
+  max-width: 560px;
+}
+
+.auth-layout__title {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.auth-layout__subtitle {
+  font-size: 13px;
+  color: var(--color-text-soft);
+  margin-bottom: 24px;
+}
+
+.auth-layout__footer {
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+/* ---- Shared auth form pieces ---- */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.auth-form .btn {
+  margin-top: 6px;
+}
+
+.auth-form__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.auth-alert {
+  padding: 11px 14px;
+  font-size: 13px;
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.auth-alert--error {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.auth-alert--success {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.auth-email-highlight {
+  font-weight: bold;
+  color: var(--color-heading);
+  word-break: break-all;
+}
+
+@media (max-width: 640px) {
+  .auth-layout { gap: 20px; padding: 24px 14px; }
+  .auth-layout__title { font-size: 21px; }
+}

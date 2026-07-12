@@ -1,112 +1,62 @@
-# ECOSphere - React + Express Application
+# EcoSphere — ESG Management Platform
 
-A full-stack application with React frontend and Express backend.
+Full-stack ESG (Environmental, Social, Governance) management platform:
+measure carbon emissions, run CSR activities and governance compliance, and
+drive engagement through gamification — unified in one dashboard.
 
-## Project Structure
+## Modules
 
-```
-ECOSphere/
-├── backend/          # Express API server
-│   ├── server.js     # Main server file
-│   ├── package.json  # Backend dependencies
-│   └── .env          # Environment variables
-├── frontend/         # React application
-│   ├── src/          # React source files
-│   ├── public/       # Public assets
-│   └── package.json  # Frontend dependencies
-└── README.md         # This file
-```
+- **Dashboard** — executive overview: E/S/G + overall ESG score, emissions
+  trend, department ranking, recent activity, quick actions
+- **Environmental** — emission factors, product ESG profiles, carbon
+  transactions (auto-calculated from operations), environmental goals
+- **Social** — CSR activities, employee participation with proof + approval,
+  diversity dashboard
+- **Governance** — policies, policy acknowledgements, audits, compliance
+  issues (severity, owner, due date)
+- **Gamification** — challenges (Draft → Active → Under Review → Completed /
+  Archived), XP, auto-awarded badges, reward redemption, leaderboards
+- **Reports** — Environmental / Social / Governance / ESG Summary + custom
+  report builder with filters and PDF/Excel/CSV export
+- **Settings** — departments, categories, ESG configuration (score weights +
+  business-rule toggles), notification settings
 
-## Prerequisites
+## Stack
 
-- Node.js (v14 or higher)
-- npm or yarn
+- **Frontend** (`/Frontend`): React 19 + Vite, React Router, Axios, plain
+  class-based CSS (all styles under `src/styles/`)
+- **Backend** (`/Backend`): Node + Express, PostgreSQL (`pg`), JWT +
+  bcryptjs, Nodemailer, Multer
 
-## Installation
+## Run it
 
-### Backend Setup
-
-1. Navigate to the backend directory:
 ```bash
-cd backend
+# 1. PostgreSQL — point Backend/.env DB_* at your server (schema
+#    auto-applies on boot).
+
+# 2. Backend (http://localhost:5000)
+cd Backend && npm install && npm run dev
+
+# 3. Frontend (http://localhost:5173)
+cd Frontend && npm install && npm run dev
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+- **Emails/OTP in dev**: with SMTP unset in `Backend/.env`, verification and
+  reset codes are printed to the backend console instead of being emailed.
+- **Admin account**: signup offers manager/employee/client only — create the
+  admin with `npm run seed:admin` (defaults: `admin@example.com` / `Admin@1234`).
+- Copy `.env.example` → `.env` in both `Backend/` and `Frontend/` and fill in
+  real values (never commit `.env`).
 
-3. Create a `.env` file in the backend directory with the following:
-```
-PORT=5000
-```
+## Team
 
-### Frontend Setup
+4 developers / 4 branches — see [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md) for the
+branch plan, file ownership and git commands, and
+[ECOSPHERE-STRUCTURE.md](ECOSPHERE-STRUCTURE.md) for the full file tree.
 
-1. Navigate to the frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-## Running the Application
-
-### Start the Backend Server
-
-From the backend directory:
-```bash
-npm run dev
-```
-
-The backend server will run on `http://localhost:5000`
-
-### Start the Frontend Development Server
-
-From the frontend directory (in a new terminal):
-```bash
-npm start
-```
-
-The React application will run on `http://localhost:3000`
-
-## API Endpoints
-
-- `GET /` - Returns a welcome message
-- `GET /api/health` - Health check endpoint
-
-## Features
-
-- React 18 with modern hooks
-- Express.js REST API
-- CORS enabled for cross-origin requests
-- Environment variable configuration
-- Hot module replacement in development
-
-## Development
-
-### Backend Development
-
-The backend uses `nodemon` for auto-reloading during development.
-
-### Frontend Development
-
-The frontend uses Create React App with hot module replacement.
-
-## Building for Production
-
-### Frontend Build
-
-From the frontend directory:
-```bash
-npm run build
-```
-
-This creates an optimized production build in the `frontend/build` directory.
-
-## License
-
-ISC
+| Developer | Branch                 |
+| --------- | ---------------------- |
+| Dhrumil   | `auth`                 |
+| Neel      | `environmental`        |
+| Kavya     | `social-governance`    |
+| Yagna     | `gamification-reports` |

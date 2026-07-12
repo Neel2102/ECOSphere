@@ -1,0 +1,20 @@
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+}
+
+/* Flat variant: subtle drop shadow like the reference dashboard surfaces */
+.card--flat {
+  box-shadow: var(--shadow-card);
+}
+
+.card--pad-none { padding: 0; }
+.card--pad-sm { padding: 14px; }
+.card--pad-md { padding: 22px; }
+.card--pad-lg { padding: 32px; }
+
+@media (min-width: 641px) {
+  .card--pad-md { padding: 26px; }
+  .card--pad-lg { padding: 40px; }
+}

@@ -1,0 +1,30 @@
+.otp-verification {
+  align-items: center;
+  text-align: center;
+}
+
+.otp-verification__text {
+  font-size: 13px;
+  color: var(--color-text-soft);
+  max-width: 320px;
+}
+
+.otp-verification .btn {
+  max-width: 320px;
+}
+
+.otp-verification__resend {
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+.otp-verification__resend-btn {
+  font-size: inherit;
+  font-weight: bold;
+  color: var(--color-secondary);
+  transition: color var(--transition-fast);
+}
+
+.otp-verification__resend-btn:hover {
+  color: var(--color-secondary-dark);
+}

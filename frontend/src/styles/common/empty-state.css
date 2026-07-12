@@ -1,0 +1,35 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 8px;
+  color: var(--color-text-faint);
+  background: var(--color-bg);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-inset-sm);
+}
+
+.empty-state__title {
+  font-size: 16px;
+}
+
+.empty-state__message {
+  max-width: 360px;
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+.empty-state__action {
+  margin-top: 12px;
+}

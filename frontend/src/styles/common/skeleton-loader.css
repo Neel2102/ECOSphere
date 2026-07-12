@@ -1,0 +1,71 @@
+.skeleton {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-dim) 25%,
+    var(--color-surface-soft) 50%,
+    var(--color-surface-dim) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton--text {
+  width: 100%;
+  height: 12px;
+}
+
+.skeleton--title {
+  width: 45%;
+  height: 18px;
+}
+
+.skeleton--avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.skeleton--box {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+.skeleton--pill {
+  width: 90px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.skeleton-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 24px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.skeleton-card__lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px;
+}
+
+.skeleton-row + .skeleton-row {
+  border-top: 1px solid var(--color-surface-dim);
+}

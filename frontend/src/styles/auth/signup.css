@@ -1,0 +1,12 @@
+.signup-form__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 641px) {
+  .signup-form__grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 18px;
+  }
+}

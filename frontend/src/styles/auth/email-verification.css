@@ -1,0 +1,30 @@
+.email-verification {
+  align-items: center;
+  text-align: center;
+}
+
+.email-verification__text {
+  font-size: 13px;
+  color: var(--color-text-soft);
+  max-width: 320px;
+}
+
+.email-verification .btn {
+  max-width: 320px;
+}
+
+.email-verification__resend {
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+.email-verification__resend-btn {
+  font-size: inherit;
+  font-weight: bold;
+  color: var(--color-secondary);
+  transition: color var(--transition-fast);
+}
+
+.email-verification__resend-btn:hover {
+  color: var(--color-secondary-dark);
+}

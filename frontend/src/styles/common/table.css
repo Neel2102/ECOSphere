@@ -1,0 +1,145 @@
+/* Generic table, styled after the reference sales-orders design:
+   soft grey header band, hairline row separators, indigo selection. */
+
+.tbl-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+/* Header */
+.tbl__th {
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  color: var(--color-text-soft);
+  text-align: left;
+  background: var(--color-surface-soft);
+  white-space: nowrap;
+}
+
+.tbl__th:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.tbl__th:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+
+.tbl__th--right { text-align: right; }
+.tbl__th--center { text-align: center; }
+.tbl__th--check { width: 48px; }
+
+.tbl__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  transition: color var(--transition-fast);
+}
+
+.tbl__sort:hover { color: var(--color-heading); }
+
+.tbl__sort-arrow {
+  color: var(--color-indigo);
+  transition: transform var(--transition-fast);
+}
+
+.tbl__sort-arrow.is-flipped { transform: rotate(180deg); }
+
+/* Rows */
+.tbl__td {
+  position: relative;
+  padding: 17px 16px;
+  font-size: 13px;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-surface-dim);
+  white-space: nowrap;
+}
+
+.tbl__row:last-child .tbl__td { border-bottom: none; }
+
+.tbl__td--right { text-align: right; }
+.tbl__td--center { text-align: center; }
+.tbl__td--check { width: 48px; }
+.tbl__td--empty { padding: 0; }
+
+.tbl__row {
+  transition: background var(--transition-fast);
+}
+
+.tbl__row:hover:not(.tbl__row--skeleton) {
+  background: var(--color-surface-soft);
+}
+
+/* Selected row: indigo accent bar on the left edge, like the reference */
+.tbl__row.is-selected .tbl__td--check::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--color-indigo);
+}
+
+/* Custom checkbox */
+.tbl-checkbox {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.tbl-checkbox input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tbl-checkbox__box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-inset-sm);
+  color: var(--color-white);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.tbl-checkbox__mark,
+.tbl-checkbox__dash {
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.tbl-checkbox__dash {
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+}
+
+.tbl-checkbox input:checked + .tbl-checkbox__box,
+.tbl-checkbox input:indeterminate + .tbl-checkbox__box {
+  background: var(--color-indigo);
+  box-shadow: none;
+}
+
+.tbl-checkbox input:checked + .tbl-checkbox__box .tbl-checkbox__mark { opacity: 1; }
+.tbl-checkbox input:indeterminate + .tbl-checkbox__box .tbl-checkbox__dash { opacity: 1; }
+
+.tbl-checkbox input:focus-visible + .tbl-checkbox__box {
+  outline: 2px solid var(--color-secondary-soft);
+  outline-offset: 1px;
+}
+
+/* Skeleton rows reuse .skeleton primitives from skeleton-loader.css */
+.tbl__row--skeleton .tbl__td { padding: 17px 16px; }

@@ -1,0 +1,31 @@
+.main-layout {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.main-layout__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left var(--transition);
+}
+
+.main-layout__content {
+  flex: 1;
+  padding: 10px 18px 32px;
+  min-width: 0;
+}
+
+@media (min-width: 1025px) {
+  .main-layout__body {
+    margin-left: var(--sidebar-width);
+  }
+
+  .main-layout.sidebar-collapsed .main-layout__body {
+    margin-left: var(--sidebar-width-collapsed);
+  }
+
+  .main-layout__content {
+    padding: 12px 28px 40px;
+  }
+}

@@ -1,4 +1,5 @@
 import ModuleShell from '../../components/layout/ModuleShell';
+import { useAuth } from '../../context/AuthContext';
 
 const TABS = [
   { label: 'CSR Activities', to: '/dashboard/social/activities', icon: 'heart' },
@@ -8,7 +9,12 @@ const TABS = [
 ];
 
 function Social() {
-  return <ModuleShell title="Social" tabs={TABS} />;
+  const { user } = useAuth();
+  const tabs = user?.role === 'employee'
+    ? TABS.filter((t) => t.to.includes('activities'))
+    : TABS;
+
+  return <ModuleShell title="Social : CSR & Employee engagement" tabs={tabs} />;
 }
 
 export default Social;

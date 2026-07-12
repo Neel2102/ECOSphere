@@ -11,6 +11,7 @@ async function list(req, res, next) {
       q: req.query.q,
       status: req.query.status,
       department_id: req.query.department_id,
+      organizationId: req.organizationId,
     });
     res.json({ success: true, data: { items } });
   } catch (err) {

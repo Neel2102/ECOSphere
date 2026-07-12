@@ -35,6 +35,7 @@ async function list(req, res, next) {
       approval_status: req.query.approval_status,
       challenge_id: req.query.challenge_id,
       employee_id: isApprover ? req.query.employee_id : req.user.id,
+      organizationId: req.organizationId,
     });
     res.json({ success: true, data: { items } });
   } catch (err) {
@@ -71,6 +72,8 @@ async function uploadProof(req, res, next) {
     }
     const item = await challengeParticipationModel.update(participation.id, {
       proof_path: `uploads/evidence/${req.file.filename}`,
+      employee_notes: req.body.notes || req.body.description || null,
+      progress: 100,
     });
     res.json({ success: true, message: 'Proof uploaded.', data: { item } });
   } catch (err) {
@@ -91,7 +94,7 @@ async function decide(req, res, next) {
     const challenge = await challengeModel.findById(participation.challenge_id);
 
     if (approve) {
-      const settings = await esgSettingsModel.get();
+      const settings = await esgSettingsModel.get(req.organizationId);
       if ((settings.evidence_requirement || challenge.evidence_required) && !participation.proof_path) {
         throw new ApiError(400, 'Evidence is required: the employee must upload proof before approval.');
       }

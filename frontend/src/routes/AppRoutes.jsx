@@ -43,6 +43,7 @@ import ComplianceIssues from '../pages/governance/ComplianceIssues';
 import Gamification from '../pages/gamification/Gamification';
 import Challenges from '../pages/gamification/Challenges';
 import ChallengeParticipation from '../pages/gamification/ChallengeParticipation';
+import ChallengeCategories from '../pages/gamification/ChallengeCategories';
 import Badges from '../pages/gamification/Badges';
 import Rewards from '../pages/gamification/Rewards';
 import Leaderboard from '../pages/gamification/Leaderboard';
@@ -76,7 +77,14 @@ function AppRoutes() {
 
 
         {/* Environmental */}
-        <Route path="environmental" element={<Environmental />}>
+        <Route
+          path="environmental"
+          element={
+            <RoleBasedRoute roles={['admin', 'manager']}>
+              <Environmental />
+            </RoleBasedRoute>
+          }
+        >
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<EnvironmentalDashboard />} />
           <Route path="emission-factors" element={<EmissionFactors />} />
@@ -86,16 +94,51 @@ function AppRoutes() {
         </Route>
 
         {/* Social */}
-        <Route path="social" element={<Social />}>
+        <Route
+          path="social"
+          element={
+            <RoleBasedRoute roles={['admin', 'manager', 'employee']}>
+              <Social />
+            </RoleBasedRoute>
+          }
+        >
           <Route index element={<Navigate to="activities" replace />} />
           <Route path="activities" element={<CsrActivities />} />
-          <Route path="participation" element={<EmployeeParticipation />} />
-          <Route path="diversity" element={<DiversityDashboard />} />
-          <Route path="training" element={<TrainingCompletion />} />
+          <Route
+            path="participation"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager']}>
+                <EmployeeParticipation />
+              </RoleBasedRoute>
+            }
+          />
+          <Route
+            path="diversity"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager']}>
+                <DiversityDashboard />
+              </RoleBasedRoute>
+            }
+          />
+          <Route
+            path="training"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager']}>
+                <TrainingCompletion />
+              </RoleBasedRoute>
+            }
+          />
         </Route>
 
         {/* Governance */}
-        <Route path="governance" element={<Governance />}>
+        <Route
+          path="governance"
+          element={
+            <RoleBasedRoute roles={['admin', 'manager']}>
+              <Governance />
+            </RoleBasedRoute>
+          }
+        >
           <Route index element={<Navigate to="policies" replace />} />
           <Route path="policies" element={<Policies />} />
           <Route path="acknowledgements" element={<PolicyAcknowledgements />} />
@@ -107,10 +150,46 @@ function AppRoutes() {
         <Route path="gamification" element={<Gamification />}>
           <Route index element={<Navigate to="challenges" replace />} />
           <Route path="challenges" element={<Challenges />} />
-          <Route path="participation" element={<ChallengeParticipation />} />
-          <Route path="badges" element={<Badges />} />
-          <Route path="rewards" element={<Rewards />} />
-          <Route path="leaderboard" element={<Leaderboard />} />
+          <Route
+            path="categories"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager']}>
+                <ChallengeCategories />
+              </RoleBasedRoute>
+            }
+          />
+          <Route
+            path="participation"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager']}>
+                <ChallengeParticipation />
+              </RoleBasedRoute>
+            }
+          />
+          <Route
+            path="badges"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager']}>
+                <Badges />
+              </RoleBasedRoute>
+            }
+          />
+          <Route
+            path="rewards"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager']}>
+                <Rewards />
+              </RoleBasedRoute>
+            }
+          />
+          <Route
+            path="leaderboard"
+            element={
+              <RoleBasedRoute roles={['admin', 'manager', 'employee']}>
+                <Leaderboard />
+              </RoleBasedRoute>
+            }
+          />
         </Route>
 
         {/* Reports */}

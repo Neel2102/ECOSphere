@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApi, useMutation } from '../../hooks/useApi';
 import gamificationService from '../../services/gamificationService';
 import settingsService from '../../services/settingsService';
@@ -44,11 +44,39 @@ function Challenges() {
   const [detailItem, setDetailItem] = useState(null);
   const [form, setForm] = useState({ title: '', description: '', xp: '', difficulty: 'medium', deadline: '', evidence_required: false, category_id: '' });
 
+  // Employee participation states
+  const [myParticipation, setMyParticipation] = useState(null);
+  const [loadingParticipation, setLoadingParticipation] = useState(false);
+  const [proofFile, setProofFile] = useState(null);
+  const [notesText, setNotesText] = useState('');
+  const [uploadingProof, setUploadingProof] = useState(false);
+
+  useEffect(() => {
+    if (detailItem && detailItem.joined_by_me) {
+      setLoadingParticipation(true);
+      setMyParticipation(null);
+      setProofFile(null);
+      setNotesText('');
+      gamificationService.listParticipations({ challenge_id: detailItem.id })
+        .then((data) => {
+          const items = data?.items || data || [];
+          if (items.length > 0) {
+            setMyParticipation(items[0]);
+            setNotesText(items[0].employee_notes || '');
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoadingParticipation(false));
+    } else {
+      setMyParticipation(null);
+    }
+  }, [detailItem]);
+
   const { data, loading, error, refetch } = useApi(
     () => gamificationService.listChallenges({ status: activeStatus }),
     [activeStatus]
   );
-  const { data: catData } = useApi(() => settingsService.listCategories(), []);
+  const { data: catData } = useApi(() => settingsService.listCategories({ type: 'challenge', status: 'active' }), []);
 
   const challenges = data?.items || [];
   const statusCounts = data?.statusCounts || [];
@@ -179,12 +207,12 @@ function Challenges() {
               <div className="activity-card__footer" onClick={(e) => e.stopPropagation()}>
                 <StatusPill status={ch.status} />
                 <div style={{ display: 'flex', gap: 8 }}>
-                  {!ch.joined_by_me && ch.status === 'active' && (
+                  {user?.role === 'employee' && !ch.joined_by_me && ch.status === 'active' && (
                     <Button variant="secondary" size="sm" loading={joining} onClick={() => join(ch.id)}>
                       Join Challenge
                     </Button>
                   )}
-                  {ch.joined_by_me && (
+                  {user?.role === 'employee' && ch.joined_by_me && (
                     <span style={{ fontSize: 12, color: 'var(--color-success)', fontWeight: 600 }}>✓ Joined</span>
                   )}
                   {canManage && (
@@ -262,7 +290,7 @@ function Challenges() {
         footer={
           detailItem && (
             <div className="modal-footer-btns">
-              {!detailItem.joined_by_me && detailItem.status === 'active' && (
+              {user?.role === 'employee' && !detailItem.joined_by_me && detailItem.status === 'active' && (
                 <Button
                   loading={joining}
                   onClick={() => join(detailItem.id).then(() => setDetailItem({ ...detailItem, joined_by_me: true, participant_count: (detailItem.participant_count || 0) + 1 })).catch(() => {})}
@@ -327,16 +355,109 @@ function Challenges() {
                 <span className="challenge-detail__label">Evidence</span>
                 <strong>{detailItem.evidence_required ? 'Proof required' : 'Optional'}</strong>
               </div>
-              <div className="challenge-detail__item">
-                <span className="challenge-detail__label">My participation</span>
-                <strong>{detailItem.joined_by_me ? '✓ Joined' : 'Not joined yet'}</strong>
-              </div>
+              {user?.role === 'employee' && (
+                <div className="challenge-detail__item">
+                  <span className="challenge-detail__label">My participation</span>
+                  <strong>{detailItem.joined_by_me ? '✓ Joined' : 'Not joined yet'}</strong>
+                </div>
+              )}
             </div>
 
             <div className="challenge-detail__desc">
               <span className="challenge-detail__label">Description</span>
               <p>{detailItem.description || 'No description provided.'}</p>
             </div>
+
+            {detailItem.joined_by_me && (
+              <div style={{ marginTop: 20, borderTop: '1px solid var(--color-surface-dim)', paddingTop: 16 }}>
+                <span className="challenge-detail__label" style={{ marginBottom: 10, display: 'block' }}>My Submission</span>
+                {loadingParticipation ? (
+                  <div className="skeleton skeleton--text" style={{ height: 40 }} />
+                ) : myParticipation ? (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                      <span>Status:</span>
+                      <span className={`status-badge status-badge--${myParticipation.approval_status}`}>
+                        {myParticipation.approval_status}
+                      </span>
+                    </div>
+                    
+                    {myParticipation.proof_path ? (
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 13, color: 'var(--color-text-soft)', marginBottom: 6 }}>
+                          Submitted Proof:
+                        </div>
+                        <a href={`http://localhost:5000/${myParticipation.proof_path}`} target="_blank" rel="noreferrer" style={{ color: 'var(--color-secondary)', fontWeight: 600 }}>
+                          📎 View Evidence Image
+                        </a>
+                      </div>
+                    ) : null}
+
+                    {myParticipation.employee_notes ? (
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 13, color: 'var(--color-text-soft)', marginBottom: 4 }}>
+                          My Notes/Description:
+                        </div>
+                        <p style={{ margin: 0, fontSize: 13.5, background: 'var(--color-surface-soft)', padding: 10, borderRadius: 8 }}>
+                          {myParticipation.employee_notes}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {myParticipation.approval_status === 'pending' && (
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!proofFile) {
+                          alert('Please select an image file to upload.');
+                          return;
+                        }
+                        setUploadingProof(true);
+                        const fd = new FormData();
+                        fd.append('proof', proofFile);
+                        fd.append('notes', notesText);
+                        gamificationService.uploadProof(myParticipation.id, fd)
+                          .then(() => {
+                            alert('Proof submitted successfully.');
+                            return gamificationService.listParticipations({ challenge_id: detailItem.id });
+                          })
+                          .then((data) => {
+                            const items = data?.items || data || [];
+                            if (items.length > 0) {
+                              setMyParticipation(items[0]);
+                            }
+                          })
+                          .catch((err) => alert(err.message || 'Failed to upload proof.'))
+                          .finally(() => setUploadingProof(false));
+                      }}>
+                        <div className="modal-form-field" style={{ marginBottom: 10 }}>
+                          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-soft)' }}>
+                            {myParticipation.proof_path ? 'Update Evidence Image *' : 'Upload Evidence Image *'}
+                          </label>
+                          <input type="file" accept="image/*" required={!myParticipation.proof_path} onChange={(e) => setProofFile(e.target.files[0])} />
+                        </div>
+                        <div className="modal-form-field" style={{ marginBottom: 10 }}>
+                          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-soft)' }}>
+                            Description / Notes
+                          </label>
+                          <textarea 
+                            placeholder="Describe how you completed the challenge..." 
+                            value={notesText} 
+                            onChange={(e) => setNotesText(e.target.value)} 
+                          />
+                        </div>
+                        <Button type="submit" variant="secondary" size="sm" loading={uploadingProof}>
+                          {myParticipation.proof_path ? 'Update Submission' : 'Submit Challenge Proof'}
+                        </Button>
+                      </form>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ color: 'var(--color-text-soft)', fontSize: 13 }}>
+                    Could not fetch participation details.
+                  </div>
+                )}
+              </div>
+            )}
 
             {canManage && (TRANSITIONS[detailItem.status] || []).length > 0 && (
               <div className="challenge-detail__lifecycle">

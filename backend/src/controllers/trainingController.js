@@ -8,7 +8,7 @@ const recordCrud = makeCrudController(trainingRecordModel, 'Training record');
 
 async function listCourses(req, res, next) {
   try {
-    const items = await trainingCourseModel.list({ q: req.query.q });
+    const items = await trainingCourseModel.list({ q: req.query.q, organization_id: req.organizationId });
     res.json({ success: true, data: { items } });
   } catch (err) {
     next(err);
@@ -22,6 +22,7 @@ async function listRecords(req, res, next) {
       employee_id: req.query.employee_id,
       department_id: req.query.department_id,
       course_id: req.query.course_id,
+      organizationId: req.organizationId,
     });
     res.json({ success: true, data: { items } });
   } catch (err) {
@@ -31,7 +32,7 @@ async function listRecords(req, res, next) {
 
 async function getStats(req, res, next) {
   try {
-    const stats = await trainingRecordModel.getStats();
+    const stats = await trainingRecordModel.getStats(req.organizationId);
     res.json({ success: true, data: stats });
   } catch (err) {
     next(err);

@@ -6,7 +6,7 @@ const { makeModel } = require('../utils/crudFactory');
 const base = makeModel({
   table: 'challenge_participations',
   writable: [
-    'challenge_id', 'employee_id', 'progress', 'proof_path',
+    'challenge_id', 'employee_id', 'progress', 'proof_path', 'employee_notes',
     'approval_status', 'xp_awarded', 'completed_at',
   ],
   order: 'id DESC',
@@ -20,12 +20,13 @@ async function findByChallengeAndEmployee(challengeId, employeeId) {
   return rows[0] || null;
 }
 
-async function listDetailed({ approval_status, employee_id, challenge_id } = {}) {
+async function listDetailed({ approval_status, employee_id, challenge_id, organizationId } = {}) {
   const params = [];
   const clauses = [];
   if (approval_status) { params.push(approval_status); clauses.push(`p.approval_status = $${params.length}`); }
   if (employee_id) { params.push(employee_id); clauses.push(`p.employee_id = $${params.length}`); }
   if (challenge_id) { params.push(challenge_id); clauses.push(`p.challenge_id = $${params.length}`); }
+  if (organizationId) { params.push(organizationId); clauses.push(`ch.organization_id = $${params.length}`); }
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   const { rows } = await query(
     `SELECT p.*, u.full_name AS employee_name, u.department_id,

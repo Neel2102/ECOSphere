@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -11,6 +11,14 @@ function MainLayout() {
   const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (user && user.role === 'employee' && (location.pathname === '/dashboard' || location.pathname === '/dashboard/')) {
+      navigate('/dashboard/gamification', { replace: true });
+    }
+  }, [user, location.pathname, navigate]);
 
   const onboardingKey = user ? `ecosphere_onboarding_completed_${user.id}` : 'ecosphere_onboarding_completed_guest';
   const [onboardingCompleted, setOnboardingCompleted] = useState(() => {

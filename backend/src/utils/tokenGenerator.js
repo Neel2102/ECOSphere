@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const env = require('../config/env');
 
 function signJwt(user) {
-  return jwt.sign({ id: user.id, role: user.role }, env.jwt.secret, {
+  return jwt.sign({ id: user.id, role: user.role, organizationId: user.organization_id }, env.jwt.secret, {
     expiresIn: env.jwt.expiresIn,
   });
 }

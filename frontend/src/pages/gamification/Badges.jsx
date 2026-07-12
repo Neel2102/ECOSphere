@@ -13,16 +13,19 @@ function Badges() {
   const { user } = useAuth();
   const canManage = ['admin', 'manager'].includes(user?.role);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ name: '', description: '', icon: '🏆', criteria: '' });
+  const [form, setForm] = useState({ name: '', description: '', icon: '🏆', unlock_rule_type: 'xp', unlock_rule_value: 50 });
 
   const { data, loading, error, refetch } = useApi(() => gamificationService.listBadges(), []);
   const badges = data?.items || data || [];
 
   const [save, { loading: saving }] = useMutation(async (values) => {
-    await gamificationService.createBadge(values);
+    await gamificationService.createBadge({
+      ...values,
+      unlock_rule_value: Number(values.unlock_rule_value),
+    });
     refetch();
     setShowModal(false);
-    setForm({ name: '', description: '', icon: '🏆', criteria: '' });
+    setForm({ name: '', description: '', icon: '🏆', unlock_rule_type: 'xp', unlock_rule_value: 50 });
   });
 
   const [remove] = useMutation(async (id) => {
@@ -61,8 +64,10 @@ function Badges() {
                 {badge.description && (
                   <div className="activity-card__meta" style={{ textAlign: 'center', marginTop: 4 }}>{badge.description}</div>
                 )}
-                {badge.criteria && (
-                  <div style={{ fontSize: 11, color: 'var(--color-text-faint)', marginTop: 4 }}>📋 {badge.criteria}</div>
+                {badge.unlock_rule_type && (
+                  <div style={{ fontSize: 11, color: 'var(--color-text-faint)', marginTop: 4 }}>
+                    🔓 Requires: {badge.unlock_rule_value} {badge.unlock_rule_type === 'xp' ? 'XP' : 'completed challenges'}
+                  </div>
                 )}
                 {canManage && (
                   <Button variant="ghost-danger" size="sm" className="btn--icon-only" style={{ marginTop: 12 }} onClick={() => remove(badge.id)} title="Delete"><Icon name="trash" size={15} /></Button>
@@ -107,9 +112,18 @@ function Badges() {
             <label>Description</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
           </div>
-          <div className="modal-form-field" style={{ marginTop: 14 }}>
-            <label>Criteria</label>
-            <input value={form.criteria} onChange={(e) => setForm({ ...form, criteria: e.target.value })} placeholder="e.g. Complete 5 challenges" />
+          <div className="modal-form-row" style={{ marginTop: 14 }}>
+            <div className="modal-form-field">
+              <label>Unlock Rule Type *</label>
+              <select value={form.unlock_rule_type} onChange={(e) => setForm({ ...form, unlock_rule_type: e.target.value })}>
+                <option value="xp">XP Points Earned</option>
+                <option value="challenges_completed">Challenges Completed</option>
+              </select>
+            </div>
+            <div className="modal-form-field">
+              <label>Unlock Value *</label>
+              <input type="number" min="1" required value={form.unlock_rule_value} onChange={(e) => setForm({ ...form, unlock_rule_value: Number(e.target.value) })} />
+            </div>
           </div>
         </form>
       </Modal>

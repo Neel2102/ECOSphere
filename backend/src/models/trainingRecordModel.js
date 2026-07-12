@@ -4,12 +4,12 @@ const { makeModel } = require('../utils/crudFactory');
 
 const base = makeModel({
   table: 'training_records',
-  writable: ['course_id', 'employee_id', 'completion_date', 'score', 'status'],
+  writable: ['course_id', 'employee_id', 'completion_date', 'score', 'status', 'organization_id'],
   order: 'completion_date DESC, id DESC',
 });
 
 // Detailed list linking users and courses
-async function listDetailed({ q, employee_id, department_id, course_id } = {}) {
+async function listDetailed({ q, employee_id, department_id, course_id, organizationId } = {}) {
   const clauses = [];
   const params = [];
   
@@ -24,6 +24,10 @@ async function listDetailed({ q, employee_id, department_id, course_id } = {}) {
   if (department_id) {
     params.push(department_id);
     clauses.push(`u.department_id = $${params.length}`);
+  }
+  if (organizationId) {
+    params.push(organizationId);
+    clauses.push(`u.organization_id = $${params.length}`);
   }
   if (q) {
     params.push(`%${q}%`);
@@ -51,7 +55,7 @@ async function listDetailed({ q, employee_id, department_id, course_id } = {}) {
 }
 
 // Completion stats for analytics card
-async function getStats() {
+async function getStats(organizationId) {
   const { rows } = await query(
     `SELECT 
        COUNT(DISTINCT tr.employee_id)::int AS unique_employees_completed,
@@ -60,7 +64,8 @@ async function getStats() {
        ROUND(COALESCE(SUM(tc.duration_hours), 0)::numeric, 1)::float AS total_training_hours
      FROM training_records tr
      JOIN training_courses tc ON tc.id = tr.course_id
-     WHERE tr.status = 'completed'`
+     WHERE tr.status = 'completed' AND tr.organization_id = $1`,
+    [organizationId]
   );
   return rows[0];
 }

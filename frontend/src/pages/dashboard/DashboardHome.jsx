@@ -83,6 +83,8 @@ function ScoreCard({ label, IconComp, score, color, gradient, loading }) {
 }
 
 function EmissionsTrendChart({ trend, loading }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
   if (loading) return <div className="dash-chart-placeholder"><div className="skeleton skeleton--text" style={{ height: 120 }} /></div>;
   if (!trend || trend.length === 0) return <div className="dash-chart-placeholder">No emissions data yet.</div>;
 
@@ -98,44 +100,92 @@ function EmissionsTrendChart({ trend, loading }) {
     return { x, y, v, label: trend[i].month || '' };
   });
 
-  const pathD = points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
-    .join(' ');
+  // Generate cubic bezier path
+  const getBezierPath = (pts) => {
+    if (pts.length < 2) return '';
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i];
+      const p1 = pts[i + 1];
+      const cpX1 = p0.x + (p1.x - p0.x) / 3;
+      const cpY1 = p0.y;
+      const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
+      const cpY2 = p1.y;
+      d += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+    }
+    return d;
+  };
+
+  const pathD = getBezierPath(points);
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="dash-trend-svg" aria-label="Emissions trend chart">
-      {/* Grid lines */}
-      {[0, 0.25, 0.5, 0.75, 1].map((pct) => (
-        <line
-          key={pct}
-          x1={pad} y1={pad + (1 - pct) * (height - pad * 2)}
-          x2={width - pad} y2={pad + (1 - pct) * (height - pad * 2)}
-          stroke="var(--color-surface-dim)" strokeWidth="1"
+    <div style={{ position: 'relative', width: '100%' }}>
+      <svg viewBox={`0 0 ${width} ${height}`} className="dash-trend-svg" aria-label="Emissions trend chart">
+        {/* Grid lines */}
+        {[0, 0.25, 0.5, 0.75, 1].map((pct) => (
+          <line
+            key={pct}
+            x1={pad} y1={pad + (1 - pct) * (height - pad * 2)}
+            x2={width - pad} y2={pad + (1 - pct) * (height - pad * 2)}
+            stroke="var(--color-surface-dim)" strokeWidth="1"
+          />
+        ))}
+
+        {/* Area fill */}
+        <defs>
+          <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-secondary)" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="var(--color-secondary)" stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        <path
+          d={`${pathD} L ${points[points.length - 1].x} ${height - pad} L ${points[0].x} ${height - pad} Z`}
+          fill="url(#trendGrad)"
         />
-      ))}
 
-      {/* Area fill */}
-      <defs>
-        <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--color-secondary)" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="var(--color-secondary)" stopOpacity="0.02" />
-        </linearGradient>
-      </defs>
-      <path
-        d={`${pathD} L ${points[points.length - 1].x} ${height - pad} L ${points[0].x} ${height - pad} Z`}
-        fill="url(#trendGrad)"
-      />
+        {/* Line */}
+        <path d={pathD} fill="none" stroke="var(--color-secondary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
-      {/* Line */}
-      <path d={pathD} fill="none" stroke="var(--color-secondary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-
-      {/* Dots */}
-      {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="4" fill="var(--color-secondary)" stroke="#fff" strokeWidth="2">
-          <title>{p.label}: {p.v.toFixed(1)} kg CO₂</title>
-        </circle>
-      ))}
-    </svg>
+        {/* Dots */}
+        {points.map((p, i) => (
+          <circle 
+            key={i} 
+            cx={p.x} 
+            cy={p.y} 
+            r={hoveredIndex === i ? "6" : "4"} 
+            fill="var(--color-secondary)" 
+            stroke="#fff" 
+            strokeWidth="2"
+            style={{ cursor: 'pointer', transition: 'r 0.15s ease' }}
+            onMouseEnter={() => setHoveredIndex(i)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <title>{p.label}: {p.v.toFixed(1)} kg CO₂</title>
+          </circle>
+        ))}
+      </svg>
+      {hoveredIndex !== null && (
+        <div style={{
+          position: 'absolute',
+          top: `${(points[hoveredIndex].y / height) * 100 - 20}%`,
+          left: `${(points[hoveredIndex].x / width) * 100}%`,
+          transform: 'translateX(-50%)',
+          background: 'var(--color-heading)',
+          color: 'var(--color-surface)',
+          padding: '4px 8px',
+          borderRadius: 6,
+          fontSize: 11,
+          fontWeight: 'bold',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          zIndex: 100,
+          boxShadow: 'var(--shadow-raised)',
+          transition: 'all 0.15s ease'
+        }}>
+          {points[hoveredIndex].label}: {points[hoveredIndex].v.toFixed(1)} kg CO₂
+        </div>
+      )}
+    </div>
   );
 }
 

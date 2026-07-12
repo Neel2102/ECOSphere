@@ -217,6 +217,18 @@ function Profile() {
               <dt>Role</dt>
               <dd className="profile__detail-role">{ROLE_LABELS[user.role] || user.role}</dd>
             </div>
+            {user.organizationName && (
+              <div className="profile__detail">
+                <dt>Organization</dt>
+                <dd>{user.organizationName}</dd>
+              </div>
+            )}
+            {user.role === 'admin' && user.organizationCode && (
+              <div className="profile__detail" style={{ background: 'rgba(0, 184, 255, 0.08)', borderRadius: 8, padding: '10px 14px', marginTop: 8 }}>
+                <dt style={{ color: 'var(--color-secondary)', fontWeight: '700' }}>Organization Code (Share with team)</dt>
+                <dd style={{ fontSize: 16, fontWeight: 'bold', fontFamily: 'monospace', color: 'var(--color-secondary-dark)' }}>{user.organizationCode}</dd>
+              </div>
+            )}
           </dl>
         )}
       </Card>

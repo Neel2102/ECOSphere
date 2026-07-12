@@ -23,6 +23,7 @@ async function listStatus(req, res, next) {
     const items = await policyAcknowledgementModel.listStatus({
       policy_id: req.query.policy_id,
       pendingOnly: req.query.pending === 'true',
+      organizationId: req.organizationId,
     });
     res.json({ success: true, data: { items } });
   } catch (err) {
@@ -36,6 +37,7 @@ async function remind(req, res, next) {
     const pending = await policyAcknowledgementModel.listStatus({
       policy_id: req.query.policy_id,
       pendingOnly: true,
+      organizationId: req.organizationId,
     });
     const byEmployee = new Map();
     for (const row of pending) {

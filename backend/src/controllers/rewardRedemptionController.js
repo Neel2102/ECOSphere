@@ -63,6 +63,7 @@ async function list(req, res, next) {
     const isApprover = ['admin', 'manager'].includes(req.user.role);
     const items = await rewardRedemptionModel.listDetailed({
       employee_id: isApprover ? req.query.employee_id : req.user.id,
+      organizationId: req.organizationId,
     });
     res.json({ success: true, data: { items } });
   } catch (err) {

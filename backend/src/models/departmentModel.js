@@ -5,18 +5,22 @@ const { makeModel } = require('../utils/crudFactory');
 
 const base = makeModel({
   table: 'departments',
-  writable: ['name', 'code', 'description', 'head_id', 'parent_department_id', 'employee_count', 'status'],
+  writable: ['name', 'code', 'description', 'head_id', 'parent_department_id', 'employee_count', 'status', 'organization_id'],
   order: 'name ASC',
   search: ['name', 'code'],
 });
 
 // List with head/parent names resolved for the settings table view.
-async function listDetailed({ q, status } = {}) {
+async function listDetailed({ q, status, organizationId } = {}) {
   const params = [];
   const clauses = [];
   if (status) {
     params.push(status);
     clauses.push(`d.status = $${params.length}`);
+  }
+  if (organizationId) {
+    params.push(organizationId);
+    clauses.push(`d.organization_id = $${params.length}`);
   }
   if (q) {
     params.push(`%${q}%`);

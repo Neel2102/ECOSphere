@@ -40,6 +40,10 @@ function ChallengeParticipation() {
       ) : '—'
     },
     {
+      key: 'employee_notes', title: 'Notes/Description',
+      render: (r) => r.employee_notes ? r.employee_notes : '—'
+    },
+    {
       key: 'approval_status', title: 'Status',
       render: (r) => <span className={`status-badge status-badge--${r.approval_status}`}>{r.approval_status}</span>
     },

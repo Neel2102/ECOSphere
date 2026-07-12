@@ -74,7 +74,7 @@ async function decide(req, res, next) {
 
     if (approve) {
       // Business rule: with Evidence Requirement ON, approval needs a proof file.
-      const settings = await esgSettingsModel.get();
+      const settings = await esgSettingsModel.get(req.organizationId);
       if ((settings.evidence_requirement || activity.evidence_required) && !participation.proof_path) {
         throw new ApiError(400, 'Evidence is required: the employee must upload proof before approval.');
       }
@@ -107,7 +107,7 @@ async function decide(req, res, next) {
 // Gender breakdown per department (Diversity Dashboard tab).
 async function diversity(req, res, next) {
   try {
-    const departments = await userModel.diversityByDepartment();
+    const departments = await userModel.diversityByDepartment(req.organizationId);
     const totals = departments.reduce(
       (acc, row) => ({
         total: acc.total + row.total,

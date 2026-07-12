@@ -21,7 +21,11 @@ const TYPE_TOGGLES = {
  */
 async function notify(userId, { type = 'general', title, message, link }) {
   try {
-    const settings = await esgSettingsModel.get();
+    const user = await userModel.findById(userId);
+    if (!user) return;
+
+    const orgId = user.organization_id;
+    const settings = await esgSettingsModel.get(orgId);
     const toggle = TYPE_TOGGLES[type];
     if (toggle && !settings[toggle]) return;
 
@@ -30,10 +34,7 @@ async function notify(userId, { type = 'general', title, message, link }) {
     }
 
     if (settings.notify_email) {
-      const user = await userModel.findById(userId);
-      if (user) {
-        await sendEmail(user.email, notificationEmail(user.full_name, title, message));
-      }
+      await sendEmail(user.email, notificationEmail(user.full_name, title, message));
     }
   } catch (err) {
     console.error('[notify] Failed to deliver notification:', err.message);

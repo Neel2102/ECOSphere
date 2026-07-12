@@ -6,6 +6,7 @@ const { verificationEmail, passwordResetEmail } = require('../utils/emailTemplat
 const { generateOtp, otpExpiry } = require('../utils/otpGenerator');
 const { signJwt, generateResetToken, resetTokenExpiry } = require('../utils/tokenGenerator');
 const env = require('../config/env');
+const { query } = require('../config/db');
 
 const BCRYPT_ROUNDS = 10;
 
@@ -20,6 +21,9 @@ const toPublicUser = (user) => ({
   departmentId: user.department_id ?? null,
   departmentName: user.department_name ?? null,
   gender: user.gender ?? null,
+  organizationId: user.organization_id ?? null,
+  organizationName: user.organization_name ?? null,
+  organizationCode: user.organization_code ?? null,
   createdAt: user.created_at,
 });
 
@@ -39,10 +43,43 @@ function assertResendAllowed(user) {
 
 async function signup(req, res, next) {
   try {
-    const { fullName, email, password, phone, role } = req.body;
+    const { fullName, email, password, phone, role, organizationName, organizationCode } = req.body;
 
     const existing = await userModel.findByEmail(email);
     if (existing) throw new ApiError(409, 'That email is already registered.');
+
+    let orgId;
+    if (role === 'admin') {
+      if (!organizationName || !organizationName.trim()) {
+        throw new ApiError(400, 'Organization name is required for admin signup.');
+      }
+      let isUnique = false;
+      let code = '';
+      while (!isUnique) {
+        code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const { rows: existingOrg } = await query('SELECT id FROM organizations WHERE code = $1', [code]);
+        if (existingOrg.length === 0) {
+          isUnique = true;
+        }
+      }
+      const { rows: newOrg } = await query(
+        'INSERT INTO organizations (name, code) VALUES ($1, $2) RETURNING id',
+        [organizationName.trim(), code]
+      );
+      orgId = newOrg[0].id;
+    } else {
+      if (!organizationCode || !organizationCode.trim()) {
+        throw new ApiError(400, 'Organization code is required.');
+      }
+      const { rows: existingOrg } = await query(
+        'SELECT id FROM organizations WHERE LOWER(code) = LOWER($1)',
+        [organizationCode.trim()]
+      );
+      if (existingOrg.length === 0) {
+        throw new ApiError(404, 'Invalid organization code. Please contact your admin.');
+      }
+      orgId = existingOrg[0].id;
+    }
 
     const otp = generateOtp();
     const user = await userModel.create({
@@ -53,7 +90,12 @@ async function signup(req, res, next) {
       role,
       otpCode: otp,
       otpExpiresAt: otpExpiry(),
+      organizationId: orgId,
     });
+
+    if (role === 'admin') {
+      await query('UPDATE organizations SET created_by = $1 WHERE id = $2', [user.id, orgId]);
+    }
 
     await sendEmail(user.email, verificationEmail(user.full_name, otp));
 

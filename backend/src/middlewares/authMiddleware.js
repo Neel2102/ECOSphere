@@ -26,6 +26,7 @@ async function requireAuth(req, res, next) {
     if (!user.is_verified) throw new ApiError(403, 'Account is not verified.', 'NOT_VERIFIED');
 
     req.user = user;
+    req.organizationId = user.organization_id;
     next();
   } catch (err) {
     next(err);

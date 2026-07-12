@@ -5,7 +5,7 @@ const { makeModel } = require('../utils/crudFactory');
 
 const base = makeModel({
   table: 'rewards',
-  writable: ['name', 'description', 'points_required', 'stock', 'status'],
+  writable: ['name', 'description', 'points_required', 'stock', 'status', 'organization_id'],
   order: 'points_required ASC',
   search: ['name'],
 });

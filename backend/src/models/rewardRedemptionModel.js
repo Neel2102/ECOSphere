@@ -9,10 +9,12 @@ const base = makeModel({
   order: 'id DESC',
 });
 
-async function listDetailed({ employee_id } = {}) {
+async function listDetailed({ employee_id, organizationId } = {}) {
   const params = [];
-  let where = '';
-  if (employee_id) { params.push(employee_id); where = ' WHERE r.employee_id = $1'; }
+  const clauses = [];
+  if (employee_id) { params.push(employee_id); clauses.push(`r.employee_id = $${params.length}`); }
+  if (organizationId) { params.push(organizationId); clauses.push(`u.organization_id = $${params.length}`); }
+  const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   const { rows } = await query(
     `SELECT r.*, rw.name AS reward_name, u.full_name AS employee_name
      FROM reward_redemptions r

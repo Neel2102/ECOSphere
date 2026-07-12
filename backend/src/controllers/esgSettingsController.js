@@ -4,7 +4,7 @@ const esgSettingsModel = require('../models/esgSettingsModel');
 
 async function getSettings(req, res, next) {
   try {
-    const settings = await esgSettingsModel.get();
+    const settings = await esgSettingsModel.get(req.organizationId);
     res.json({ success: true, data: { settings } });
   } catch (err) {
     next(err);
@@ -15,7 +15,7 @@ async function getSettings(req, res, next) {
 // preferences - they live on the same single settings row.
 async function updateSettings(req, res, next) {
   try {
-    const settings = await esgSettingsModel.update(req.body);
+    const settings = await esgSettingsModel.update(req.body, req.organizationId);
     res.json({ success: true, message: 'Settings updated.', data: { settings } });
   } catch (err) {
     next(err);

@@ -7,19 +7,20 @@ const base = makeModel({
   table: 'csr_activities',
   writable: [
     'title', 'category_id', 'description', 'activity_date', 'location',
-    'points', 'evidence_required', 'status', 'created_by',
+    'points', 'evidence_required', 'status', 'created_by', 'organization_id',
   ],
   order: 'activity_date DESC NULLS LAST, id DESC',
   search: ['title', 'location'],
 });
 
 // Activity cards: category name + joined count + whether a user has joined.
-async function listDetailed({ q, status, category_id, forUserId } = {}) {
+async function listDetailed({ q, status, category_id, forUserId, organizationId } = {}) {
   const params = [];
   const clauses = [];
   if (status) { params.push(status); clauses.push(`a.status = $${params.length}`); }
   if (category_id) { params.push(category_id); clauses.push(`a.category_id = $${params.length}`); }
-  if (q) { params.push(`%${q}%`); clauses.push(`a.title ILIKE $${params.length}`); }
+  if (q) { params.push(`%${q}%`); clauses.push(`(a.title ILIKE $${params.length} OR a.location ILIKE $${params.length})`); }
+  if (organizationId) { params.push(organizationId); clauses.push(`a.organization_id = $${params.length}`); }
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   params.push(forUserId || 0);
   const { rows } = await query(

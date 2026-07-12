@@ -12,6 +12,7 @@ async function list(req, res, next) {
       status: req.query.status,
       category_id: req.query.category_id,
       forUserId: req.user.id,
+      organizationId: req.organizationId,
     });
     res.json({ success: true, data: { items } });
   } catch (err) {
@@ -21,7 +22,7 @@ async function list(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const item = await csrActivityModel.create({ ...req.body, created_by: req.user.id });
+    const item = await csrActivityModel.create({ ...req.body, created_by: req.user.id }, req.organizationId);
     res.status(201).json({ success: true, message: 'CSR activity created.', data: { item } });
   } catch (err) {
     next(err);

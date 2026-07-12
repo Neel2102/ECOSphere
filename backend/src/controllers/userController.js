@@ -11,7 +11,7 @@ const ASSIGNABLE_ROLES = ['manager', 'employee'];
 // Admin/manager only (enforced by role middleware on the route).
 async function listUsers(req, res, next) {
   try {
-    const users = await userModel.listAll();
+    const users = await userModel.listAll(req.organizationId);
     res.json({ success: true, data: { users: users.map(toPublicUser) } });
   } catch (err) {
     next(err);
@@ -49,6 +49,7 @@ async function createUser(req, res, next) {
       role,
       departmentId: departmentId || null,
       gender: gender || null,
+      organizationId: req.organizationId,
     });
 
     res.status(201).json({

@@ -1,6 +1,20 @@
 -- EcoSphere - Full database schema (users + all ESG master/transactional tables)
 -- Owner: dhrumil | Applied automatically on server start (idempotent).
 
+-- ========================= ORGANIZATIONS ==========================
+CREATE TABLE IF NOT EXISTS organizations (
+  id          SERIAL PRIMARY KEY,
+  name        VARCHAR(150) NOT NULL,
+  code        VARCHAR(20)  NOT NULL UNIQUE,
+  created_by  INTEGER,
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+-- Seed a default organization for pre-existing data.
+INSERT INTO organizations (id, name, code)
+VALUES (1, 'Default Organization', 'DEFAULT')
+ON CONFLICT (id) DO NOTHING;
+
 -- ============================== USERS ==============================
 CREATE TABLE IF NOT EXISTS users (
   id                      SERIAL PRIMARY KEY,
@@ -30,6 +44,11 @@ ALTER TABLE users ALTER COLUMN role SET DEFAULT 'employee';
 ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
 ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('admin', 'manager', 'employee'));
 
+-- Organization link for users
+ALTER TABLE users ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE users SET organization_id = 1 WHERE organization_id IS NULL;
+CREATE INDEX IF NOT EXISTS idx_users_organization ON users (organization_id);
+
 -- ========================== MASTER DATA ============================
 
 CREATE TABLE IF NOT EXISTS departments (
@@ -43,6 +62,11 @@ CREATE TABLE IF NOT EXISTS departments (
   created_at            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at            TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
+
+-- Organization link for departments
+ALTER TABLE departments ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE departments SET organization_id = 1 WHERE organization_id IS NULL;
+CREATE INDEX IF NOT EXISTS idx_departments_organization ON departments (organization_id);
 
 -- ESG profile fields on users (department link + diversity data)
 ALTER TABLE users ADD COLUMN IF NOT EXISTS department_id INTEGER REFERENCES departments(id) ON DELETE SET NULL;
@@ -58,6 +82,10 @@ CREATE TABLE IF NOT EXISTS categories (
   UNIQUE (name, type)
 );
 
+-- Organization link for categories
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE categories SET organization_id = 1 WHERE organization_id IS NULL;
+
 CREATE TABLE IF NOT EXISTS emission_factors (
   id           SERIAL PRIMARY KEY,
   name         VARCHAR(100) NOT NULL,
@@ -68,6 +96,10 @@ CREATE TABLE IF NOT EXISTS emission_factors (
   created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
+
+-- Organization link for emission_factors
+ALTER TABLE emission_factors ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE emission_factors SET organization_id = 1 WHERE organization_id IS NULL;
 
 CREATE TABLE IF NOT EXISTS product_esg_profiles (
   id              SERIAL PRIMARY KEY,
@@ -82,6 +114,10 @@ CREATE TABLE IF NOT EXISTS product_esg_profiles (
   updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Organization link for product_esg_profiles
+ALTER TABLE product_esg_profiles ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE product_esg_profiles SET organization_id = 1 WHERE organization_id IS NULL;
+
 CREATE TABLE IF NOT EXISTS environmental_goals (
   id            SERIAL PRIMARY KEY,
   name          VARCHAR(120) NOT NULL,
@@ -95,6 +131,10 @@ CREATE TABLE IF NOT EXISTS environmental_goals (
   updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Organization link for environmental_goals
+ALTER TABLE environmental_goals ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE environmental_goals SET organization_id = 1 WHERE organization_id IS NULL;
+
 CREATE TABLE IF NOT EXISTS esg_policies (
   id             SERIAL PRIMARY KEY,
   title          VARCHAR(150) NOT NULL,
@@ -105,6 +145,10 @@ CREATE TABLE IF NOT EXISTS esg_policies (
   created_at     TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at     TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
+
+-- Organization link for esg_policies
+ALTER TABLE esg_policies ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE esg_policies SET organization_id = 1 WHERE organization_id IS NULL;
 
 CREATE TABLE IF NOT EXISTS badges (
   id                SERIAL PRIMARY KEY,
@@ -118,6 +162,10 @@ CREATE TABLE IF NOT EXISTS badges (
   updated_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Organization link for badges
+ALTER TABLE badges ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE badges SET organization_id = 1 WHERE organization_id IS NULL;
+
 CREATE TABLE IF NOT EXISTS rewards (
   id              SERIAL PRIMARY KEY,
   name            VARCHAR(100) NOT NULL,
@@ -129,9 +177,14 @@ CREATE TABLE IF NOT EXISTS rewards (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Single-row ESG configuration (weights + business-rule toggles)
+-- Organization link for rewards
+ALTER TABLE rewards ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE rewards SET organization_id = 1 WHERE organization_id IS NULL;
+
+-- Per-organization ESG configuration (weights + business-rule toggles)
 CREATE TABLE IF NOT EXISTS esg_settings (
-  id                        INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  id                        INTEGER PRIMARY KEY DEFAULT 1 CHECK (id >= 1),
+  organization_id           INTEGER REFERENCES organizations(id) ON DELETE CASCADE,
   weight_environmental      INTEGER NOT NULL DEFAULT 40 CHECK (weight_environmental BETWEEN 0 AND 100),
   weight_social             INTEGER NOT NULL DEFAULT 30 CHECK (weight_social BETWEEN 0 AND 100),
   weight_governance         INTEGER NOT NULL DEFAULT 30 CHECK (weight_governance BETWEEN 0 AND 100),
@@ -147,7 +200,22 @@ CREATE TABLE IF NOT EXISTS esg_settings (
   updated_at                TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-INSERT INTO esg_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+-- Remove old single-row constraint if it exists, add org column
+ALTER TABLE esg_settings DROP CONSTRAINT IF EXISTS esg_settings_id_check;
+ALTER TABLE esg_settings ADD CONSTRAINT esg_settings_id_check CHECK (id >= 1);
+-- Add organization_id if not present (for existing installations)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'esg_settings' AND column_name = 'organization_id'
+  ) THEN
+    ALTER TABLE esg_settings ADD COLUMN organization_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE;
+  END IF;
+END $$;
+UPDATE esg_settings SET organization_id = 1 WHERE organization_id IS NULL;
+
+INSERT INTO esg_settings (id, organization_id) VALUES (1, 1) ON CONFLICT (id) DO NOTHING;
 
 -- ======================= TRANSACTIONAL DATA ========================
 
@@ -171,6 +239,11 @@ CREATE TABLE IF NOT EXISTS carbon_transactions (
 CREATE INDEX IF NOT EXISTS idx_carbon_tx_date ON carbon_transactions (transaction_date);
 CREATE INDEX IF NOT EXISTS idx_carbon_tx_department ON carbon_transactions (department_id);
 
+-- Organization link for carbon_transactions
+ALTER TABLE carbon_transactions ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE carbon_transactions SET organization_id = 1 WHERE organization_id IS NULL;
+CREATE INDEX IF NOT EXISTS idx_carbon_tx_organization ON carbon_transactions (organization_id);
+
 CREATE TABLE IF NOT EXISTS csr_activities (
   id                SERIAL PRIMARY KEY,
   title             VARCHAR(150) NOT NULL,
@@ -185,6 +258,10 @@ CREATE TABLE IF NOT EXISTS csr_activities (
   created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Organization link for csr_activities
+ALTER TABLE csr_activities ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE csr_activities SET organization_id = 1 WHERE organization_id IS NULL;
 
 CREATE TABLE IF NOT EXISTS employee_participations (
   id              SERIAL PRIMARY KEY,
@@ -215,12 +292,18 @@ CREATE TABLE IF NOT EXISTS challenges (
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Organization link for challenges
+ALTER TABLE challenges ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE challenges SET organization_id = 1 WHERE organization_id IS NULL;
+CREATE INDEX IF NOT EXISTS idx_challenges_organization ON challenges (organization_id);
+
 CREATE TABLE IF NOT EXISTS challenge_participations (
   id              SERIAL PRIMARY KEY,
   challenge_id    INTEGER NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
   employee_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   progress        INTEGER     NOT NULL DEFAULT 0 CHECK (progress BETWEEN 0 AND 100),
   proof_path      VARCHAR(255),
+  employee_notes  TEXT,
   approval_status VARCHAR(10) NOT NULL DEFAULT 'pending' CHECK (approval_status IN ('pending', 'approved', 'rejected')),
   xp_awarded      INTEGER     NOT NULL DEFAULT 0 CHECK (xp_awarded >= 0),
   completed_at    TIMESTAMPTZ,
@@ -250,6 +333,10 @@ CREATE TABLE IF NOT EXISTS audits (
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Organization link for audits
+ALTER TABLE audits ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE audits SET organization_id = 1 WHERE organization_id IS NULL;
+
 CREATE TABLE IF NOT EXISTS compliance_issues (
   id            SERIAL PRIMARY KEY,
   title         VARCHAR(150) NOT NULL,
@@ -267,6 +354,10 @@ CREATE TABLE IF NOT EXISTS compliance_issues (
 );
 
 CREATE INDEX IF NOT EXISTS idx_compliance_due ON compliance_issues (status, due_date);
+
+-- Organization link for compliance_issues
+ALTER TABLE compliance_issues ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE compliance_issues SET organization_id = 1 WHERE organization_id IS NULL;
 
 CREATE TABLE IF NOT EXISTS employee_badges (
   id          SERIAL PRIMARY KEY,
@@ -323,6 +414,10 @@ CREATE TABLE IF NOT EXISTS training_courses (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Organization link for training_courses
+ALTER TABLE training_courses ADD COLUMN IF NOT EXISTS organization_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL;
+UPDATE training_courses SET organization_id = 1 WHERE organization_id IS NULL;
+
 CREATE TABLE IF NOT EXISTS training_records (
   id              SERIAL PRIMARY KEY,
   course_id       INTEGER NOT NULL REFERENCES training_courses(id) ON DELETE CASCADE,
@@ -335,3 +430,4 @@ CREATE TABLE IF NOT EXISTS training_records (
   UNIQUE (course_id, employee_id)
 );
 
+ALTER TABLE challenge_participations ADD COLUMN IF NOT EXISTS employee_notes TEXT;

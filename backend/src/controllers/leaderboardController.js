@@ -19,10 +19,10 @@ async function leaderboard(req, res, next) {
        LEFT JOIN (SELECT employee_id, SUM(points_earned)::int AS points
                   FROM employee_participations WHERE approval_status = 'approved'
                   GROUP BY employee_id) cs ON cs.employee_id = u.id
-       WHERE u.is_verified AND u.role IN ('employee', 'manager')
+       WHERE u.is_verified AND u.role IN ('employee', 'manager') AND u.organization_id = $2
        ORDER BY xp DESC, u.full_name ASC
        LIMIT $1`,
-      [limit]
+      [limit, req.organizationId]
     );
 
     const { rows: departments } = await query(
@@ -34,9 +34,10 @@ async function leaderboard(req, res, next) {
                          COALESCE(SUM(xp_awarded), 0) AS xp
                   FROM challenge_participations WHERE approval_status = 'approved'
                   GROUP BY employee_id) x ON x.employee_id = u.id
-       WHERE d.status = 'active'
+       WHERE d.status = 'active' AND d.organization_id = $1
        GROUP BY d.id, d.name
-       ORDER BY xp DESC, d.name ASC`
+       ORDER BY xp DESC, d.name ASC`,
+      [req.organizationId]
     );
 
     res.json({

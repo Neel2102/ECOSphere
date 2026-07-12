@@ -22,24 +22,26 @@ const SEVERITY_PENALTY = { critical: 20, high: 15, medium: 10, low: 5 };
 const clamp = (value) => Math.max(0, Math.min(100, value));
 const round1 = (value) => Math.round(value * 10) / 10;
 
-async function environmentalByDepartment() {
+async function environmentalByDepartment(organizationId) {
   const { rows } = await query(
     `SELECT department_id,
             AVG(CASE WHEN current_co2 <= 0 THEN 100
                      ELSE LEAST(100, target_co2 / current_co2 * 100) END) AS score
      FROM environmental_goals
-     WHERE department_id IS NOT NULL
-     GROUP BY department_id`
+     WHERE department_id IS NOT NULL AND organization_id = $1
+     GROUP BY department_id`,
+    [organizationId]
   );
   return new Map(rows.map((row) => [row.department_id, Number(row.score)]));
 }
 
-async function memberCounts() {
+async function memberCounts(organizationId) {
   const { rows } = await query(
     `SELECT department_id, COUNT(*)::int AS members
      FROM users
-     WHERE department_id IS NOT NULL AND is_verified AND role IN ('employee', 'manager')
-     GROUP BY department_id`
+     WHERE department_id IS NOT NULL AND is_verified AND role IN ('employee', 'manager') AND organization_id = $1
+     GROUP BY department_id`,
+    [organizationId]
   );
   return new Map(rows.map((row) => [row.department_id, row.members]));
 }
@@ -48,20 +50,21 @@ async function memberCounts() {
  * Recomputes every active department's scores for the given period
  * (default: current month), stores them, and returns them with the overall.
  */
-async function computeScores(period) {
+async function computeScores(period, organizationId) {
   const targetPeriod = period || new Date().toISOString().slice(0, 7); // YYYY-MM
-  const settings = await esgSettingsModel.get();
+  const settings = await esgSettingsModel.get(organizationId);
 
   const { rows: departments } = await query(
-    "SELECT id, name, code FROM departments WHERE status = 'active' ORDER BY name"
+    "SELECT id, name, code FROM departments WHERE status = 'active' AND organization_id = $1 ORDER BY name",
+    [organizationId]
   );
 
   const [envMap, members, participation, ackRates, openIssues] = await Promise.all([
-    environmentalByDepartment(),
-    memberCounts(),
-    employeeParticipationModel.participationByDepartment(),
-    policyAcknowledgementModel.rateByDepartment(),
-    complianceIssueModel.openBySeverityPerDepartment(),
+    environmentalByDepartment(organizationId),
+    memberCounts(organizationId),
+    employeeParticipationModel.participationByDepartment(organizationId),
+    policyAcknowledgementModel.rateByDepartment(organizationId),
+    complianceIssueModel.openBySeverityPerDepartment(organizationId),
   ]);
 
   const participationMap = new Map(participation.map((row) => [row.department_id, row.participants]));

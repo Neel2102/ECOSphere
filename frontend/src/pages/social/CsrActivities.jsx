@@ -23,7 +23,7 @@ function CsrActivities() {
   const [form, setForm] = useState({ title: '', description: '', activity_date: '', location: '', points: '', evidence_required: false, status: 'open' });
 
   const { data, loading, error, refetch } = useApi(() => socialService.listActivities(), []);
-  const { data: catData } = useApi(() => settingsService.listCategories(), []);
+  const { data: catData } = useApi(() => settingsService.listCategories({ type: 'csr_activity', status: 'active' }), []);
 
   const activities = data?.items || data || [];
   const categories = catData?.items || catData || [];

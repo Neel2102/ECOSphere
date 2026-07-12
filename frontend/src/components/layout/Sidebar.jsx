@@ -7,28 +7,33 @@ import '../../styles/dashboard/sidebar.css';
 // `accent` drives the module color-coding across the whole app.
 export const ESG_MODULES = [
   { key: 'environmental', label: 'Environmental', icon: 'leaf', base: '/dashboard/environmental', accent: 'env' },
-  { key: 'social', label: 'Social', icon: 'users', base: '/dashboard/social', accent: 'soc' },
+  { key: 'social', label: 'Social : CSR & Employee engagement', icon: 'users', base: '/dashboard/social', accent: 'soc' },
   { key: 'governance', label: 'Governance', icon: 'shield', base: '/dashboard/governance', accent: 'gov' },
   { key: 'gamification', label: 'Gamification', icon: 'trophy', base: '/dashboard/gamification', accent: 'gam' },
 ];
 
 // Flat list used by Header for page-title matching.
 export const NAV_ITEMS = [
-  { to: '/dashboard/reports', label: 'Reports' },
   { to: '/dashboard/settings', label: 'Settings' },
+  { to: '/dashboard/reports', label: 'Reports' },
   { to: '/dashboard/profile', label: 'My Profile' },
   ...ESG_MODULES.map((m) => ({ to: m.base, label: m.label })),
 ];
 
 function Sidebar({ collapsed, mobileOpen, onCloseMobile, onHoverEnter, onHoverLeave }) {
   const { user } = useAuth();
-  const canManage = ['admin', 'manager'].includes(user?.role);
+  
+  const modulesToShow = ESG_MODULES.filter((m) => {
+    if (user?.role === 'employee') {
+      return m.key === 'gamification' || m.key === 'social';
+    }
+    return true; // admin and manager see all modules
+  });
 
   const links = [
-    { to: '/dashboard', label: 'Dashboard', icon: 'home', end: true },
-    ...ESG_MODULES.map((m) => ({ to: m.base, label: m.label, icon: m.icon, accent: m.accent })),
-    // Reports & Settings are management screens.
-    ...(canManage
+    ...(user?.role === 'admin' || user?.role === 'manager' ? [{ to: '/dashboard', label: 'Dashboard', icon: 'home', end: true }] : []),
+    ...modulesToShow.map((m) => ({ to: m.base, label: m.label, icon: m.icon, accent: m.accent })),
+    ...(user?.role === 'admin' || user?.role === 'manager'
       ? [
           { to: '/dashboard/reports', label: 'Reports', icon: 'reports' },
           { to: '/dashboard/settings', label: 'Settings', icon: 'sliders' },

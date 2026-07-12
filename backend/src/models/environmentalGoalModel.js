@@ -5,17 +5,18 @@ const { makeModel } = require('../utils/crudFactory');
 
 const base = makeModel({
   table: 'environmental_goals',
-  writable: ['name', 'department_id', 'target_co2', 'current_co2', 'deadline', 'status'],
+  writable: ['name', 'department_id', 'target_co2', 'current_co2', 'deadline', 'status', 'organization_id'],
   order: 'deadline ASC',
   search: ['name'],
 });
 
 // Goals with department name + progress % (100 = at/below target).
-async function listDetailed({ q, department_id, status } = {}) {
+async function listDetailed({ q, department_id, status, organizationId } = {}) {
   const params = [];
   const clauses = [];
   if (department_id) { params.push(department_id); clauses.push(`g.department_id = $${params.length}`); }
   if (status) { params.push(status); clauses.push(`g.status = $${params.length}`); }
+  if (organizationId) { params.push(organizationId); clauses.push(`g.organization_id = $${params.length}`); }
   if (q) { params.push(`%${q}%`); clauses.push(`g.name ILIKE $${params.length}`); }
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   const { rows } = await query(

@@ -13,8 +13,8 @@ const settingsService = {
     api.delete(`/settings/departments/${id}`).then((r) => r.data),
 
   // Categories
-  listCategories: () =>
-    api.get('/settings/categories').then((r) => r.data.data),
+  listCategories: (params) =>
+    api.get('/settings/categories', { params }).then((r) => r.data.data),
   createCategory: (data) =>
     api.post('/settings/categories', data).then((r) => r.data),
   updateCategory: (id, data) =>

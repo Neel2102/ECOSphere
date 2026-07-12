@@ -4,7 +4,7 @@ const { makeModel } = require('../utils/crudFactory');
 
 module.exports = makeModel({
   table: 'emission_factors',
-  writable: ['name', 'source_type', 'unit', 'factor_value', 'status'],
+  writable: ['name', 'source_type', 'unit', 'factor_value', 'status', 'organization_id'],
   order: 'source_type ASC, name ASC',
   search: ['name', 'unit'],
 });

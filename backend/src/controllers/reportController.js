@@ -10,6 +10,7 @@ const pickFilters = (req) => ({
   from: req.query.from,
   to: req.query.to,
   module: req.query.module,
+  organizationId: req.organizationId,
 });
 
 const fileName = (title, ext) =>

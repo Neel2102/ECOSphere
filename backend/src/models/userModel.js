@@ -2,26 +2,26 @@ const { query } = require('../config/db');
 
 // Columns safe to expose to clients (never the hash, OTP or reset token).
 const PUBLIC_COLUMNS =
-  'id, full_name, email, phone, role, profile_image_path, is_verified, department_id, gender, created_at, updated_at';
+  'id, full_name, email, phone, role, profile_image_path, is_verified, department_id, gender, organization_id, created_at, updated_at';
 
-async function create({ fullName, email, passwordHash, phone, role, otpCode, otpExpiresAt }) {
+async function create({ fullName, email, passwordHash, phone, role, otpCode, otpExpiresAt, organizationId }) {
   const { rows } = await query(
-    `INSERT INTO users (full_name, email, password_hash, phone, role, otp_code, otp_expires_at)
-     VALUES ($1, LOWER($2), $3, $4, $5, $6, $7)
+    `INSERT INTO users (full_name, email, password_hash, phone, role, otp_code, otp_expires_at, organization_id)
+     VALUES ($1, LOWER($2), $3, $4, $5, $6, $7, $8)
      RETURNING ${PUBLIC_COLUMNS}`,
-    [fullName, email, passwordHash, phone, role, otpCode, otpExpiresAt]
+    [fullName, email, passwordHash, phone, role, otpCode, otpExpiresAt, organizationId]
   );
   return rows[0];
 }
 
 // Admin onboarding: account is created verified and department-assigned,
 // so the new team member can log in immediately.
-async function createOnboarded({ fullName, email, passwordHash, phone, role, departmentId, gender }) {
+async function createOnboarded({ fullName, email, passwordHash, phone, role, departmentId, gender, organizationId }) {
   const { rows } = await query(
-    `INSERT INTO users (full_name, email, password_hash, phone, role, department_id, gender, is_verified)
-     VALUES ($1, LOWER($2), $3, $4, $5, $6, $7, TRUE)
+    `INSERT INTO users (full_name, email, password_hash, phone, role, department_id, gender, is_verified, organization_id)
+     VALUES ($1, LOWER($2), $3, $4, $5, $6, $7, TRUE, $8)
      RETURNING ${PUBLIC_COLUMNS}`,
-    [fullName, email, passwordHash, phone, role, departmentId, gender]
+    [fullName, email, passwordHash, phone, role, departmentId, gender, organizationId]
   );
   return rows[0];
 }
@@ -32,7 +32,16 @@ async function findByEmail(email) {
 }
 
 async function findById(id) {
-  const { rows } = await query(`SELECT ${PUBLIC_COLUMNS} FROM users WHERE id = $1`, [id]);
+  const { rows } = await query(
+    `SELECT u.id, u.full_name, u.email, u.phone, u.role, u.profile_image_path,
+            u.is_verified, u.department_id, u.gender, u.organization_id,
+            u.created_at, u.updated_at,
+            o.name AS organization_name, o.code AS organization_code
+     FROM users u
+     LEFT JOIN organizations o ON o.id = u.organization_id
+     WHERE u.id = $1`,
+    [id]
+  );
   return rows[0] || null;
 }
 
@@ -96,14 +105,17 @@ async function updateProfileImage(id, imagePath) {
   return rows[0];
 }
 
-async function listAll() {
+async function listAll(organizationId) {
   const { rows } = await query(
     `SELECT u.id, u.full_name, u.email, u.phone, u.role, u.profile_image_path,
-            u.is_verified, u.department_id, u.gender, u.created_at, u.updated_at,
+            u.is_verified, u.department_id, u.gender, u.organization_id,
+            u.created_at, u.updated_at,
             d.name AS department_name
      FROM users u
      LEFT JOIN departments d ON d.id = u.department_id
-     ORDER BY u.created_at DESC`
+     WHERE u.organization_id = $1
+     ORDER BY u.created_at DESC`,
+    [organizationId]
   );
   return rows;
 }
@@ -124,7 +136,7 @@ async function adminUpdate(id, { role, departmentId, gender }) {
 }
 
 // Gender counts per department (diversity dashboard).
-async function diversityByDepartment() {
+async function diversityByDepartment(organizationId) {
   const { rows } = await query(
     `SELECT d.id AS department_id, d.name AS department_name,
             COUNT(u.id)::int AS total,
@@ -134,9 +146,10 @@ async function diversityByDepartment() {
             COUNT(*) FILTER (WHERE u.gender IS NULL)::int AS unspecified
      FROM departments d
      LEFT JOIN users u ON u.department_id = d.id AND u.is_verified
-     WHERE d.status = 'active'
+     WHERE d.status = 'active' AND d.organization_id = $1
      GROUP BY d.id, d.name
-     ORDER BY d.name`
+     ORDER BY d.name`,
+    [organizationId]
   );
   return rows;
 }

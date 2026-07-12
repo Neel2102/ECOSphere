@@ -28,6 +28,7 @@ async function create(req, res, next) {
       emissionFactorId: req.body.emission_factor_id,
       quantity: req.body.quantity,
       manualCo2: req.body.co2_amount,
+      organizationId: req.organizationId,
     });
     const item = await carbonTransactionModel.create({
       ...req.body,
@@ -54,6 +55,7 @@ async function update(req, res, next) {
         emissionFactorId: req.body.emission_factor_id ?? existing.emission_factor_id,
         quantity: req.body.quantity ?? existing.quantity,
         manualCo2: req.body.co2_amount ?? existing.co2_amount,
+        organizationId: req.organizationId,
       });
       patch = { ...patch, co2_amount: co2Amount, unit: patch.unit || unit, auto_calculated: autoCalculated };
     }

@@ -19,23 +19,36 @@ async function upsert({ departmentId, period, environmental, social, governance,
   return rows[0];
 }
 
-async function listForPeriod(period) {
+async function listForPeriod(period, organizationId) {
+  const params = [period];
+  let filter = '';
+  if (organizationId) {
+    params.push(organizationId);
+    filter = ' AND d.organization_id = $2';
+  }
   const { rows } = await query(
     `SELECT s.*, d.name AS department_name, d.code AS department_code
      FROM department_scores s
      JOIN departments d ON d.id = s.department_id
-     WHERE s.period = $1
+     WHERE s.period = $1${filter}
      ORDER BY s.total_score DESC`,
-    [period]
+    params
   );
   return rows;
 }
 
 // Score history across periods (trend charts / reports).
-async function history({ department_id, months = 12 } = {}) {
+async function history({ department_id, months = 12, organizationId } = {}) {
   const params = [months];
   let extra = '';
-  if (department_id) { params.push(department_id); extra = ' AND s.department_id = $2'; }
+  if (department_id) {
+    params.push(department_id);
+    extra += ' AND s.department_id = $2';
+  }
+  if (organizationId) {
+    params.push(organizationId);
+    extra += ` AND d.organization_id = $${params.length}`;
+  }
   const { rows } = await query(
     `SELECT s.*, d.name AS department_name
      FROM department_scores s

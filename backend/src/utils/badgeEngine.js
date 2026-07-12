@@ -12,11 +12,14 @@ const { notify } = require('./notificationService');
  */
 async function evaluateBadges(employeeId) {
   try {
-    const settings = await esgSettingsModel.get();
-    if (!settings.badge_auto_award) return [];
+    const userModel = require('../models/userModel');
+    const user = await userModel.findById(employeeId);
+    const orgId = user?.organization_id;
+    const settings = await esgSettingsModel.get(orgId);
+    if (!settings || !settings.badge_auto_award) return [];
 
     const [badges, earnedIds, summary] = await Promise.all([
-      badgeModel.list({ where: { status: 'active' } }),
+      badgeModel.list({ where: { status: 'active', organization_id: orgId } }),
       badgeModel.earnedBadgeIds(employeeId),
       challengeParticipationModel.xpSummaryFor(employeeId),
     ]);

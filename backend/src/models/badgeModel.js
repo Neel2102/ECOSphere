@@ -5,7 +5,7 @@ const { makeModel } = require('../utils/crudFactory');
 
 const base = makeModel({
   table: 'badges',
-  writable: ['name', 'description', 'icon', 'unlock_rule_type', 'unlock_rule_value', 'status'],
+  writable: ['name', 'description', 'icon', 'unlock_rule_type', 'unlock_rule_value', 'status', 'organization_id'],
   order: 'unlock_rule_value ASC',
   search: ['name'],
 });
@@ -17,6 +17,7 @@ async function listWithEarned(forUserId) {
             EXISTS (SELECT 1 FROM employee_badges eb
                     WHERE eb.badge_id = b.id AND eb.employee_id = $1) AS earned_by_me
      FROM badges b
+     WHERE b.organization_id = (SELECT organization_id FROM users WHERE id = $1)
      ORDER BY b.unlock_rule_value ASC`,
     [forUserId || 0]
   );

@@ -12,8 +12,8 @@ const ApiError = require('./apiError');
  * operation records (purchase/manufacturing/fleet/expense) need no manual
  * entry. With the toggle OFF a manual co2_amount is accepted as a fallback.
  */
-async function resolveCo2({ emissionFactorId, quantity, manualCo2 }) {
-  const settings = await esgSettingsModel.get();
+async function resolveCo2({ emissionFactorId, quantity, manualCo2, organizationId }) {
+  const settings = await esgSettingsModel.get(organizationId);
 
   if (settings.auto_emission_calculation) {
     if (!emissionFactorId) {

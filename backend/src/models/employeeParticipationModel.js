@@ -42,13 +42,14 @@ async function listDetailed({ approval_status, employee_id, activity_id } = {}) 
 }
 
 // Distinct participating employees per department (social score input).
-async function participationByDepartment() {
+async function participationByDepartment(organizationId) {
   const { rows } = await query(
     `SELECT u.department_id, COUNT(DISTINCT p.employee_id)::int AS participants
      FROM employee_participations p
      JOIN users u ON u.id = p.employee_id
-     WHERE p.approval_status = 'approved' AND u.department_id IS NOT NULL
-     GROUP BY u.department_id`
+     WHERE p.approval_status = 'approved' AND u.department_id IS NOT NULL AND u.organization_id = $1
+     GROUP BY u.department_id`,
+    [organizationId]
   );
   return rows;
 }

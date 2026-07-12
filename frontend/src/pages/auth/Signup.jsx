@@ -23,6 +23,8 @@ function Signup() {
     confirmPassword: '',
     phone: '',
     role: '',
+    organizationName: '',
+    organizationCode: '',
   });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState('');
@@ -43,7 +45,16 @@ function Signup() {
     }
     if (form.confirmPassword !== form.password) next.confirmPassword = 'Passwords do not match.';
     if (!/^[0-9]{10}$/.test(form.phone)) next.phone = 'Enter a 10-digit phone number.';
-    if (!form.role) next.role = 'Please select a role.';
+    if (!form.role) {
+      next.role = 'Please select a role.';
+    } else {
+      if (form.role === 'admin' && !form.organizationName.trim()) {
+        next.organizationName = 'Organization name is required.';
+      }
+      if ((form.role === 'manager' || form.role === 'employee') && !form.organizationCode.trim()) {
+        next.organizationCode = 'Organization code is required.';
+      }
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -130,6 +141,24 @@ function Signup() {
             onChange={(value) => setField('role', value)}
             error={errors.role}
           />
+          {form.role === 'admin' && (
+            <Input
+              label="Organization Name"
+              placeholder="Acme Corporation"
+              value={form.organizationName}
+              onChange={(event) => setField('organizationName', event.target.value)}
+              error={errors.organizationName}
+            />
+          )}
+          {(form.role === 'manager' || form.role === 'employee') && (
+            <Input
+              label="Organization Code"
+              placeholder="e.g. AB12CD"
+              value={form.organizationCode}
+              onChange={(event) => setField('organizationCode', event.target.value)}
+              error={errors.organizationCode}
+            />
+          )}
         </div>
 
         <Button type="submit" size="lg" fullWidth loading={submitting}>

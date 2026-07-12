@@ -24,6 +24,7 @@ async function environmentalReport(filters) {
   pushFilter(params, clauses, 't.created_by = ?', filters.employee_id);
   pushFilter(params, clauses, 't.transaction_date >= ?', filters.from);
   pushFilter(params, clauses, 't.transaction_date <= ?', filters.to);
+  pushFilter(params, clauses, 't.organization_id = ?', filters.organizationId);
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   const { rows } = await query(
     `SELECT t.transaction_date AS date, t.reference, t.source_type,
@@ -60,6 +61,7 @@ async function socialReport(filters) {
   pushFilter(params, clauses, 'a.category_id = ?', filters.category_id);
   pushFilter(params, clauses, 'p.created_at::date >= ?', filters.from);
   pushFilter(params, clauses, 'p.created_at::date <= ?', filters.to);
+  pushFilter(params, clauses, 'a.organization_id = ?', filters.organizationId);
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   const { rows } = await query(
     `SELECT u.full_name AS employee, d.name AS department, a.title AS activity,
@@ -96,6 +98,7 @@ async function governanceReport(filters) {
   pushFilter(params, clauses, 'i.owner_id = ?', filters.employee_id);
   pushFilter(params, clauses, 'i.created_at::date >= ?', filters.from);
   pushFilter(params, clauses, 'i.created_at::date <= ?', filters.to);
+  pushFilter(params, clauses, 'i.organization_id = ?', filters.organizationId);
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   const { rows } = await query(
     `SELECT i.title AS issue, i.severity, d.name AS department, u.full_name AS owner,
@@ -134,6 +137,7 @@ async function gamificationReport(filters) {
   pushFilter(params, clauses, 'ch.category_id = ?', filters.category_id);
   pushFilter(params, clauses, 'p.created_at::date >= ?', filters.from);
   pushFilter(params, clauses, 'p.created_at::date <= ?', filters.to);
+  pushFilter(params, clauses, 'ch.organization_id = ?', filters.organizationId);
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   const { rows } = await query(
     `SELECT u.full_name AS employee, d.name AS department, ch.title AS challenge,
@@ -161,8 +165,8 @@ async function gamificationReport(filters) {
   };
 }
 
-async function summaryReport() {
-  const scores = await computeScores();
+async function summaryReport(filters) {
+  const scores = await computeScores(undefined, filters.organizationId);
   const rows = scores.departments.map((dept) => ({
     department: dept.department_name,
     environmental: dept.environmental_score,

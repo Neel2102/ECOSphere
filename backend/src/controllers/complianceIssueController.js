@@ -12,6 +12,7 @@ async function list(req, res, next) {
       severity: req.query.severity,
       department_id: req.query.department_id,
       owner_id: req.query.mine === 'true' ? req.user.id : req.query.owner_id,
+      organizationId: req.organizationId,
     });
     res.json({ success: true, data: { items } });
   } catch (err) {
@@ -22,7 +23,10 @@ async function list(req, res, next) {
 // New issue -> its owner is notified (business rule: notification system).
 async function create(req, res, next) {
   try {
-    const item = await complianceIssueModel.create(req.body);
+    const item = await complianceIssueModel.create({
+      ...req.body,
+      organization_id: req.organizationId,
+    });
     await notify(item.owner_id, {
       type: 'compliance',
       title: 'New compliance issue assigned to you',
@@ -61,7 +65,7 @@ async function remove(req, res, next) {
 // Called on demand (e.g. when the governance page loads).
 async function flagOverdue(req, res, next) {
   try {
-    const overdue = await complianceIssueModel.findNewlyOverdue();
+    const overdue = await complianceIssueModel.findNewlyOverdue(req.organizationId);
     for (const issue of overdue) {
       await notify(issue.owner_id, {
         type: 'compliance',

@@ -16,10 +16,25 @@ const governanceRoutes = require('./routes/governanceRoutes');
 const gamificationRoutes = require('./routes/gamificationRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const trainingRoutes = require('./routes/trainingRoutes');
 
 const app = express();
 
-app.use(cors({ origin: env.clientUrl }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (
+      env.nodeEnv === 'development' ||
+      origin === env.clientUrl ||
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:')
+    ) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Uploaded files are served statically; the DB stores only relative paths.
@@ -39,6 +54,7 @@ app.use('/api/governance', governanceRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/social/training', trainingRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

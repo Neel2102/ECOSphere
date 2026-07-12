@@ -1,11 +1,12 @@
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import Icon from '../common/Icon/Icon';
 import '../../styles/common/module.css';
 
 /**
  * ModuleShell — shared tab-bar layout for all ESG module pages.
  * Props:
  *  - title: string
- *  - tabs: [{ label, to }]
+ *  - tabs: [{ label, to, icon, count }]
  */
 function ModuleShell({ title, tabs }) {
   const navigate = useNavigate();
@@ -24,7 +25,11 @@ function ModuleShell({ title, tabs }) {
               className={`module-tab${isActive ? ' is-active' : ''}`}
               onClick={() => navigate(tab.to)}
             >
-              {tab.label}
+              {tab.icon && <Icon name={tab.icon} size={17} />}
+              <span className="module-tab-label">{tab.label}</span>
+              {tab.count !== undefined && (
+                <span className="module-tab-count">{tab.count}</span>
+              )}
             </button>
           );
         })}

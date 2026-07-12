@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../hooks/useApi';
+import Icon from '../../components/common/Icon/Icon';
 import dashboardService from '../../services/dashboardService';
 import '../../styles/dashboard/dashboard-home.css';
 
 const SCORE_CONFIG = [
-  { key: 'environmental_score', label: 'Environmental', icon: '🌱', color: 'var(--color-success)' },
-  { key: 'social_score', label: 'Social', icon: '👥', color: 'var(--color-secondary)' },
-  { key: 'governance_score', label: 'Governance', icon: '⚖️', color: 'var(--color-warning)' },
-  { key: 'overall_score', label: 'Overall ESG', icon: '🌍', color: 'var(--color-accent)' },
+  { key: 'environmental_score', label: 'Environmental', icon: 'leaf', color: 'var(--color-success)' },
+  { key: 'social_score', label: 'Social', icon: 'users', color: 'var(--color-secondary)' },
+  { key: 'governance_score', label: 'Governance', icon: 'shield', color: 'var(--color-warning)' },
+  { key: 'overall_score', label: 'Overall ESG', icon: 'activity', color: 'var(--color-accent)' },
 ];
 
 const ACTIVITY_ICONS = {
-  participation: '✅',
-  challenge: '🏆',
-  compliance: '⚠️',
-  carbon: '♻️',
-  policy: '📋',
+  participation: 'check',
+  challenge: 'trophy',
+  compliance: 'alert',
+  carbon: 'leaf',
+  policy: 'orders',
 };
 
 function ScoreCard({ label, icon, score, color, loading }) {
@@ -24,7 +25,9 @@ function ScoreCard({ label, icon, score, color, loading }) {
   return (
     <div className="dash-score-card">
       <div className="dash-score-card__header">
-        <span className="dash-score-card__icon">{icon}</span>
+        <span className="dash-score-card__icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <Icon name={icon} size={20} />
+        </span>
         <span className="dash-score-card__label">{label}</span>
       </div>
       {loading ? (
@@ -145,7 +148,7 @@ function DashboardHome() {
     <div className="dash-home">
       {error && (
         <div className="dash-error">
-          ⚠️ Could not load dashboard: {error}
+          <Icon name="alert" size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} /> Could not load dashboard: {error}
         </div>
       )}
 
@@ -186,11 +189,15 @@ function DashboardHome() {
       {/* Charts Row */}
       <section className="dash-charts">
         <div className="dash-chart-card">
-          <h3 className="dash-chart-card__title">🌿 Emissions Trend (12 mo)</h3>
+          <h3 className="dash-chart-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon name="leaf" size={18} /> Emissions Trend (12 mo)
+          </h3>
           <EmissionsTrendChart trend={trend} loading={loading} />
         </div>
         <div className="dash-chart-card">
-          <h3 className="dash-chart-card__title">🏢 Department ESG Ranking</h3>
+          <h3 className="dash-chart-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon name="home" size={18} /> Department ESG Ranking
+          </h3>
           <DeptRankingChart departments={departments} loading={loading} />
         </div>
       </section>
@@ -198,7 +205,9 @@ function DashboardHome() {
       {/* Activity + Quick Actions */}
       <section className="dash-bottom">
         <div className="dash-activity">
-          <h3 className="dash-activity__title">🕐 Recent Activity</h3>
+          <h3 className="dash-activity__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon name="activity" size={18} /> Recent Activity
+          </h3>
           {loading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="skeleton skeleton--text" style={{ margin: '8px 0' }} />
@@ -209,8 +218,12 @@ function DashboardHome() {
             <ul className="dash-activity__list">
               {activity.map((item, i) => (
                 <li key={i} className="dash-activity__item">
-                  <span className="dash-activity__dot">
-                    {ACTIVITY_ICONS[item.kind] || '•'}
+                  <span className="dash-activity__dot" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    {ACTIVITY_ICONS[item.kind] ? (
+                      <Icon name={ACTIVITY_ICONS[item.kind]} size={15} />
+                    ) : (
+                      '•'
+                    )}
                   </span>
                   <span className="dash-activity__text">{item.text}</span>
                   <span className="dash-activity__time">
@@ -225,18 +238,20 @@ function DashboardHome() {
         </div>
 
         <div className="dash-quick-actions">
-          <h3 className="dash-qa__title">⚡ Quick Actions</h3>
+          <h3 className="dash-qa__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon name="sliders" size={18} /> Quick Actions
+          </h3>
           <button className="dash-qa__btn dash-qa__btn--green" onClick={() => navigate('/dashboard/environmental/carbon-transactions')}>
-            + Log Carbon Data
+            Log Carbon Data
           </button>
           <button className="dash-qa__btn dash-qa__btn--blue" onClick={() => navigate('/dashboard/gamification/challenges')}>
-            🏁 Start Challenge
+            Start Challenge
           </button>
           <button className="dash-qa__btn dash-qa__btn--grey" onClick={() => navigate('/dashboard/reports')}>
-            📊 View Reports
+            View Reports
           </button>
           <button className="dash-qa__btn dash-qa__btn--orange" onClick={() => navigate('/dashboard/social/activities')}>
-            🤝 CSR Activities
+            CSR Activities
           </button>
         </div>
       </section>

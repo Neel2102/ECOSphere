@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fileUrl } from '../../services/api';
+import Icon from '../common/Icon/Icon';
 import { NAV_ITEMS, ESG_MODULES } from './Sidebar';
 import notificationService from '../../services/notificationService';
 import '../../styles/dashboard/header.css';
@@ -126,7 +127,7 @@ function Header({ onOpenMobileSidebar }) {
             aria-label="Notifications"
             onClick={() => setNotifOpen((open) => !open)}
           >
-            🔔
+            <Icon name="bell" size={20} />
             {unreadCount > 0 && <span className="header__notif-dot" aria-hidden="true" />}
           </button>
 
@@ -199,7 +200,7 @@ function Header({ onOpenMobileSidebar }) {
                 role="menuitem"
                 onClick={() => setMenuOpen(false)}
               >
-                👤 My Profile
+                <Icon name="user" size={16} style={{ marginRight: 8 }} /> My Profile
               </Link>
               <button
                 type="button"
@@ -207,7 +208,7 @@ function Header({ onOpenMobileSidebar }) {
                 role="menuitem"
                 onClick={handleLogout}
               >
-                🚪 Log out
+                <Icon name="logout" size={16} style={{ marginRight: 8 }} /> Log out
               </button>
             </div>
           )}

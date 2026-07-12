@@ -1,2 +1,50 @@
 /* EcoSphere - Carbon Transactions page styles
    Owner: neel | Implemented in Phase 3 */
+
+.carbon-transactions {
+  padding-bottom: 80px; /* keep the bulk bar clear of the last rows */
+}
+
+.carbon-card {
+  position: relative;
+  z-index: 1;
+}
+
+.carbon-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 18px;
+}
+
+.carbon-source {
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.carbon-amount {
+  font-weight: bold;
+  color: var(--color-success);
+}
+
+.carbon-row-menu {
+  display: inline-flex;
+  padding: 6px;
+  color: var(--color-text-faint);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.carbon-row-menu:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-dim);
+}
+
+/* Form styling matching SalesOrders */
+.carbon-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

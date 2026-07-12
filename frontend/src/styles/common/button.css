@@ -43,19 +43,15 @@
   outline: none;
 }
 
-/* Secondary: neumorphic neutral */
-.btn--secondary {
+/* Secondary: neumorphic neutral (original, kept for compatibility) */
+.btn--neutral {
   background: var(--color-bg);
   color: var(--color-text);
   box-shadow: var(--shadow-raised-sm);
 }
 
-.btn--secondary:hover:not(:disabled) { color: var(--color-heading); }
-.btn--secondary:active:not(:disabled),
-.btn--secondary:focus-visible {
-  box-shadow: var(--shadow-inset-sm);
-  outline: none;
-}
+.btn--neutral:hover:not(:disabled) { color: var(--color-heading); }
+.btn--neutral:active:not(:disabled) { box-shadow: var(--shadow-inset-sm); outline: none; }
 
 /* Danger: imperial red */
 .btn--danger {
@@ -139,16 +135,6 @@
 
 .btn--warning:hover:not(:disabled) { box-shadow: 0 6px 18px rgba(237,162,58,0.4); transform: translateY(-1px); }
 .btn--warning:active:not(:disabled) { transform: none; }
-
-/* Neutral: neumorphic grey */
-.btn--neutral {
-  background: var(--color-bg);
-  color: var(--color-text);
-  box-shadow: var(--shadow-raised-sm);
-}
-
-.btn--neutral:hover:not(:disabled) { color: var(--color-heading); }
-.btn--neutral:active:not(:disabled) { box-shadow: var(--shadow-inset-sm); outline: none; }
 
 /* States */
 .btn:disabled {

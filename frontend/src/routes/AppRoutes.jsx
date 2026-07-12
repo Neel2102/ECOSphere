@@ -18,6 +18,7 @@ import Inventory from '../pages/dashboard/Inventory';
 import Invoicing from '../pages/dashboard/Invoicing';
 import Customers from '../pages/dashboard/Customers';
 import SalesOrders from '../pages/dashboard/SalesOrders';
+import Onboarding from '../pages/dashboard/Onboarding';
 
 // Environmental
 import Environmental from '../pages/environmental/Environmental';
@@ -80,6 +81,7 @@ function AppRoutes() {
         <Route path="invoicing" element={<Invoicing />} />
         <Route path="customers" element={<Customers />} />
         <Route path="sales" element={<SalesOrders />} />
+        <Route path="onboarding" element={<Onboarding />} />
 
         {/* Environmental */}
         <Route path="environmental" element={<Environmental />}>

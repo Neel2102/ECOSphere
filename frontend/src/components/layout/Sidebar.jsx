@@ -1,12 +1,13 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import Icon from '../common/Icon/Icon';
 import '../../styles/dashboard/sidebar.css';
 
 export const ESG_MODULES = [
   {
     key: 'environmental',
     label: 'Environmental',
-    icon: '🌱',
+    icon: 'leaf',
     base: '/dashboard/environmental',
     children: [
       { to: '/dashboard/environmental/emission-factors', label: 'Emission Factors' },
@@ -18,7 +19,7 @@ export const ESG_MODULES = [
   {
     key: 'social',
     label: 'Social',
-    icon: '👥',
+    icon: 'users',
     base: '/dashboard/social',
     children: [
       { to: '/dashboard/social/activities', label: 'CSR Activities' },
@@ -29,7 +30,7 @@ export const ESG_MODULES = [
   {
     key: 'governance',
     label: 'Governance',
-    icon: '⚖️',
+    icon: 'shield',
     base: '/dashboard/governance',
     children: [
       { to: '/dashboard/governance/policies', label: 'Policies' },
@@ -41,7 +42,7 @@ export const ESG_MODULES = [
   {
     key: 'gamification',
     label: 'Gamification',
-    icon: '🎮',
+    icon: 'trophy',
     base: '/dashboard/gamification',
     children: [
       { to: '/dashboard/gamification/challenges', label: 'Challenges' },
@@ -54,7 +55,7 @@ export const ESG_MODULES = [
   {
     key: 'operations',
     label: 'Daily Operations',
-    icon: '💼',
+    icon: 'briefcase',
     base: '/dashboard/operations',
     children: [
       { to: '/dashboard/inventory', label: 'Manufacturing Logs' },
@@ -109,10 +110,13 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
                 onClick={onCloseMobile}
                 title="Dashboard"
               >
-                <span className="sidebar__link-icon">🏠</span>
+                <span className="sidebar__link-icon">
+                  <Icon name="home" size={17} />
+                </span>
                 <span className="sidebar__link-label">Dashboard</span>
               </NavLink>
             </li>
+
 
             {/* ESG module groups */}
             {ESG_MODULES.map((module) => {
@@ -127,7 +131,9 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
                     onClick={() => toggleGroup(module.key)}
                     title={module.label}
                   >
-                    <span className="sidebar__link-icon">{module.icon}</span>
+                    <span className="sidebar__link-icon">
+                      <Icon name={module.icon} size={17} />
+                    </span>
                     <span className="sidebar__link-label">{module.label}</span>
                     <span className={`sidebar__chevron${isOpen ? ' is-open' : ''}`}>▾</span>
                   </button>
@@ -161,7 +167,9 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
                 onClick={onCloseMobile}
                 title="Reports"
               >
-                <span className="sidebar__link-icon">📊</span>
+                <span className="sidebar__link-icon">
+                  <Icon name="reports" size={17} />
+                </span>
                 <span className="sidebar__link-label">Reports</span>
               </NavLink>
             </li>
@@ -174,7 +182,9 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
                 onClick={onCloseMobile}
                 title="Settings"
               >
-                <span className="sidebar__link-icon">⚙️</span>
+                <span className="sidebar__link-icon">
+                  <Icon name="sliders" size={17} />
+                </span>
                 <span className="sidebar__link-label">Settings</span>
               </NavLink>
             </li>

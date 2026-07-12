@@ -29,4 +29,8 @@ router.patch('/participations/:id/reject', canManage, employeeParticipationContr
 // Diversity dashboard
 router.get('/diversity', employeeParticipationController.diversity);
 
+const trainingRoutes = require('./trainingRoutes');
+router.use('/training', trainingRoutes);
+
 module.exports = router;
+

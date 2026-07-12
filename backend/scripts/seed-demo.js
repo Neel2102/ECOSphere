@@ -181,6 +181,25 @@ async function seed() {
      ('Extra Day Off', 'One additional leave day.', 500, 5)`
   );
 
+  // Training Courses
+  const { rows: courses } = await client.query(
+    `INSERT INTO training_courses (title, description, duration_hours, category, status) VALUES
+     ('Introduction to ESG Metrics', 'Understand the basic components of Environmental, Social, and Governance metrics.', 2.50, 'Social', 'active'),
+     ('Carbon Accounting & Net Zero Goals', 'Deep dive into carbon accounting processes, emission factors, and calculations.', 4.00, 'Environmental', 'active'),
+     ('Corporate Integrity and Compliance Audit', 'Learn governance standards, compliance controls, and internal audits.', 3.00, 'Governance', 'active'),
+     ('Workspace Inclusion and Diversity', 'Training on supporting diversity, equity, and inclusion in the corporate office.', 1.50, 'Social', 'active')
+     RETURNING id`
+  );
+
+  // Training Records (Completions)
+  await client.query(
+    `INSERT INTO training_records (course_id, employee_id, completion_date, score, status) VALUES
+     ($1, $2, CURRENT_DATE - 4, 85, 'completed'),
+     ($3, $4, CURRENT_DATE - 2, 90, 'completed'),
+     ($5, $2, CURRENT_DATE - 1, 95, 'completed')`,
+    [courses[0].id, user['Aditi Rao'], courses[1].id, user['Karan Shah'], courses[3].id]
+  );
+
   await client.query('COMMIT');
   console.log('[seed-demo] Done. Demo users (password Demo@1234):');
   console.log('  aditi.rao@example.com / karan.shah@example.com / priya.nair@example.com (employees)');

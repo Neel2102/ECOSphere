@@ -1,0 +1,309 @@
+/* ===== Module Shell — shared by all ESG module pages ===== */
+.module-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: fade-in-up 0.25s ease;
+  min-height: 100%;
+}
+
+/* Tab bar */
+.module-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 6px;
+  box-shadow: var(--shadow-raised-sm);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.module-tab {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-sidebar);
+  color: var(--color-text-soft);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.module-tab:hover {
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+}
+
+.module-tab.is-active {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 184, 255, 0.3);
+}
+
+/* Page content area */
+.module-content {
+  flex: 1;
+}
+
+/* Module page toolbar */
+.module-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.module-toolbar__right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Module table card */
+.module-table-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised-sm);
+  overflow: hidden;
+}
+
+.module-table-card__header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-surface-dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.module-table-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+/* ESG button variants */
+.btn--secondary {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,184,255,0.25);
+}
+
+.btn--secondary:hover {
+  box-shadow: 0 6px 18px rgba(0,184,255,0.4);
+  transform: translateY(-1px);
+}
+
+.btn--danger {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+  color: #fff;
+}
+
+.btn--success {
+  background: linear-gradient(135deg, var(--color-success), #17c871);
+  color: #fff;
+}
+
+.btn--warning {
+  background: linear-gradient(135deg, var(--color-warning), #e8941f);
+  color: #fff;
+}
+
+/* Search input styled */
+.module-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-surface-dim);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  box-shadow: var(--shadow-inset-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.module-search:focus-within {
+  border-color: var(--color-secondary);
+}
+
+.module-search input {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--color-text);
+  width: 180px;
+}
+
+/* Modal form row */
+.modal-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) { .modal-form-row { grid-template-columns: 1fr; } }
+
+.modal-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.modal-form-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.modal-form-field input,
+.modal-form-field select,
+.modal-form-field textarea {
+  padding: 9px 12px;
+  border: 1.5px solid var(--color-surface-dim);
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sidebar);
+  transition: border-color var(--transition-fast);
+  box-shadow: var(--shadow-inset-sm);
+}
+
+.modal-form-field input:focus,
+.modal-form-field select:focus,
+.modal-form-field textarea:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(0,184,255,0.12);
+}
+
+.modal-form-field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-footer-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* Status/severity badge overrides */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge--active, .status-badge--open, .status-badge--approved { background: var(--color-success-soft); color: var(--color-success); }
+.status-badge--completed { background: var(--color-secondary-soft); color: var(--color-secondary); }
+.status-badge--on_track { background: var(--color-success-soft); color: var(--color-success); }
+.status-badge--pending { background: var(--color-warning-soft); color: var(--color-warning); }
+.status-badge--under_review, .status-badge--draft { background: var(--color-neutral-soft); color: var(--color-neutral); }
+.status-badge--rejected, .status-badge--archived, .status-badge--closed { background: var(--color-accent-soft); color: var(--color-accent); }
+.status-badge--resolved { background: var(--color-success-soft); color: var(--color-success); }
+
+.severity-badge--high { background: var(--color-accent-soft); color: var(--color-accent); }
+.severity-badge--medium { background: var(--color-warning-soft); color: var(--color-warning); }
+.severity-badge--low { background: var(--color-info-soft); color: var(--color-info); }
+
+/* Progress bar inline */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-surface-dim);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-success));
+  transition: width 0.6s ease;
+}
+
+.progress-bar--danger .progress-bar__fill { background: var(--color-accent); }
+.progress-bar--warning .progress-bar__fill { background: var(--color-warning); }
+.progress-bar--success .progress-bar__fill { background: var(--color-success); }
+
+/* Activity cards (Social / Gamification) */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.activity-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-raised-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1.5px solid transparent;
+  transition: all var(--transition);
+}
+
+.activity-card:hover {
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-raised);
+  transform: translateY(-2px);
+}
+
+.activity-card__title {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-heading);
+}
+
+.activity-card__meta {
+  font-size: 12px;
+  color: var(--color-text-soft);
+}
+
+.activity-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+/* Inline error / loading state */
+.page-error {
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.page-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-soft);
+  font-size: 14px;
+}

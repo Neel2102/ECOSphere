@@ -303,3 +303,28 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications (user_id, is_read);
+
+-- ========================== TRAINING ============================
+CREATE TABLE IF NOT EXISTS training_courses (
+  id              SERIAL PRIMARY KEY,
+  title           VARCHAR(150) NOT NULL,
+  description     TEXT,
+  duration_hours  NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (duration_hours >= 0),
+  category        VARCHAR(100),
+  status          VARCHAR(10) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS training_records (
+  id              SERIAL PRIMARY KEY,
+  course_id       INTEGER NOT NULL REFERENCES training_courses(id) ON DELETE CASCADE,
+  employee_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  completion_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  score           INTEGER CHECK (score BETWEEN 0 AND 100),
+  status          VARCHAR(15) NOT NULL DEFAULT 'completed' CHECK (status IN ('enrolled', 'completed', 'failed')),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (course_id, employee_id)
+);
+

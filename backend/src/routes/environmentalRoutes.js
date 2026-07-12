@@ -36,6 +36,7 @@ router.delete('/goals/:id', canManage, environmentalGoalController.remove);
 // Carbon transactions (+ monthly/department summary for charts)
 router.get('/carbon-transactions', carbonTransactionController.list);
 router.get('/carbon-transactions/summary', carbonTransactionController.summary);
+router.get('/dashboard-data', carbonTransactionController.getDashboardData);
 router.post('/carbon-transactions', canManage, environmentalValidators.carbonTransaction, carbonTransactionController.create);
 router.put('/carbon-transactions/:id', canManage, carbonTransactionController.update);
 router.delete('/carbon-transactions/:id', canManage, carbonTransactionController.remove);

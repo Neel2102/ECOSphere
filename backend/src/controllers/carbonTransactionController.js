@@ -1,5 +1,6 @@
 // EcoSphere - Carbon Transaction CRUD + auto emission calculation
 // Owner: neel
+const { query } = require('../config/db');
 const carbonTransactionModel = require('../models/carbonTransactionModel');
 const { resolveCo2 } = require('../utils/emissionCalculator');
 const ApiError = require('../utils/apiError');
@@ -89,4 +90,80 @@ async function summary(req, res, next) {
   }
 }
 
-module.exports = { list, create, update, remove, summary };
+async function getDashboardData(req, res, next) {
+  try {
+    const from = req.query.from;
+    const to = req.query.to;
+    
+    let whereClauses = [];
+    let queryParams = [];
+    
+    if (from) {
+      queryParams.push(from);
+      whereClauses.push(`transaction_date >= $${queryParams.length}`);
+    }
+    if (to) {
+      queryParams.push(to);
+      whereClauses.push(`transaction_date <= $${queryParams.length}`);
+    }
+    
+    const whereSql = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
+    const tWhereSql = whereClauses.length ? `WHERE ${whereClauses.map(c => 't.' + c).join(' AND ')}` : '';
+    
+    const [totals, bySource, byDepartment, trend, goals] = await Promise.all([
+      // 1. Overall totals
+      query(
+        `SELECT ROUND(COALESCE(SUM(co2_amount), 0)::numeric, 2) AS total_co2, COUNT(*)::int AS tx_count 
+         FROM carbon_transactions
+         ${whereSql}`,
+        queryParams
+      ).then(r => r.rows[0]),
+      
+      // 2. By source type
+      query(
+        `SELECT source_type, ROUND(COALESCE(SUM(co2_amount), 0)::numeric, 2) AS total_co2, COUNT(*)::int AS tx_count
+         FROM carbon_transactions
+         ${whereSql}
+         GROUP BY source_type`,
+        queryParams
+      ).then(r => r.rows),
+      
+      // 3. By department
+      query(
+        `SELECT t.department_id, d.name AS department_name, ROUND(COALESCE(SUM(t.co2_amount), 0)::numeric, 2) AS total_co2, COUNT(*)::int AS tx_count
+         FROM carbon_transactions t
+         LEFT JOIN departments d ON d.id = t.department_id
+         ${tWhereSql}
+         GROUP BY t.department_id, d.name`,
+        queryParams
+      ).then(r => r.rows),
+      
+      // 4. Monthly trend (last 12 months)
+      carbonTransactionModel.monthlyTotals(12),
+      
+      // 5. Environmental goals
+      query(
+        `SELECT g.*, d.name AS department_name
+         FROM environmental_goals g
+         LEFT JOIN departments d ON d.id = g.department_id
+         ORDER BY g.deadline ASC`
+      ).then(r => r.rows),
+    ]);
+    
+    res.json({
+      success: true,
+      data: {
+        totalCo2: totals?.total_co2 || 0,
+        txCount: totals?.tx_count || 0,
+        bySource,
+        byDepartment,
+        trend,
+        goals,
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { list, create, update, remove, summary, getDashboardData };

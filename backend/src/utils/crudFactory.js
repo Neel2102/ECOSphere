@@ -36,9 +36,10 @@ function makeModel({ table, writable, order = 'id DESC', search = [], touch = tr
     },
 
     async create(data) {
-      const entries = Object.entries(data).filter(
-        ([key, val]) => writable.includes(key) && val !== undefined
-      );
+      const entries = Object.entries(data)
+        .filter(([key, val]) => writable.includes(key) && val !== undefined)
+        .map(([key, val]) => [key, val === '' ? null : val]);
+
       if (entries.length === 0) throw new ApiError(400, 'No valid fields provided.');
       const cols = entries.map(([key]) => key);
       const vals = entries.map(([, val]) => val);
@@ -51,9 +52,10 @@ function makeModel({ table, writable, order = 'id DESC', search = [], touch = tr
     },
 
     async update(id, data) {
-      const entries = Object.entries(data).filter(
-        ([key, val]) => writable.includes(key) && val !== undefined
-      );
+      const entries = Object.entries(data)
+        .filter(([key, val]) => writable.includes(key) && val !== undefined)
+        .map(([key, val]) => [key, val === '' ? null : val]);
+
       if (entries.length === 0) return this.findById(id);
       const sets = entries.map(([key], index) => `${key} = $${index + 2}`);
       if (touch) sets.push('updated_at = NOW()');

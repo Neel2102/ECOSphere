@@ -1,10 +1,12 @@
 const app = require('./app');
 const env = require('./config/env');
 const { initDb } = require('./config/db');
+const { startScheduler } = require('./utils/complianceScheduler');
 
 async function start() {
   try {
     await initDb();
+    startScheduler();
   } catch (err) {
     console.error('[db] Could not connect to PostgreSQL:', err.message);
     console.error('[db] Check the DB_* values in Backend/.env. The server will not start.');

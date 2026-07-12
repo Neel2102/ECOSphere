@@ -21,6 +21,7 @@ async function environmentalReport(filters) {
   const params = [];
   const clauses = [];
   pushFilter(params, clauses, 't.department_id = ?', filters.department_id);
+  pushFilter(params, clauses, 't.created_by = ?', filters.employee_id);
   pushFilter(params, clauses, 't.transaction_date >= ?', filters.from);
   pushFilter(params, clauses, 't.transaction_date <= ?', filters.to);
   const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';

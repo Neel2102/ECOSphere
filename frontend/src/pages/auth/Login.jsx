@@ -9,10 +9,9 @@ import { useAuth } from '../../context/AuthContext';
 import '../../styles/auth/login.css';
 
 const ROLE_OPTIONS = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'manager', label: 'Manager' },
+  { value: 'admin', label: 'Organization Admin' },
+  { value: 'manager', label: 'Department Admin' },
   { value: 'employee', label: 'Employee' },
-  { value: 'client', label: 'Client' },
 ];
 
 function Login() {

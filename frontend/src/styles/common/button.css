@@ -102,6 +102,54 @@
   outline: none;
 }
 
+/* Secondary (ESG blue) — replaces neumorphic "secondary" for ESG module buttons */
+.btn--secondary {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(0,184,255,0.25);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  box-shadow: 0 6px 18px rgba(0,184,255,0.4);
+  transform: translateY(-1px);
+}
+
+.btn--secondary:active:not(:disabled) {
+  box-shadow: var(--shadow-inset-sm);
+  transform: none;
+  outline: none;
+}
+
+/* Success: green */
+.btn--success {
+  background: linear-gradient(135deg, var(--color-success), #17c871);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(31,168,100,0.25);
+}
+
+.btn--success:hover:not(:disabled) { box-shadow: 0 6px 18px rgba(31,168,100,0.4); transform: translateY(-1px); }
+.btn--success:active:not(:disabled) { transform: none; }
+
+/* Warning: orange */
+.btn--warning {
+  background: linear-gradient(135deg, var(--color-warning), #e8941f);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(237,162,58,0.25);
+}
+
+.btn--warning:hover:not(:disabled) { box-shadow: 0 6px 18px rgba(237,162,58,0.4); transform: translateY(-1px); }
+.btn--warning:active:not(:disabled) { transform: none; }
+
+/* Neutral: neumorphic grey */
+.btn--neutral {
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-raised-sm);
+}
+
+.btn--neutral:hover:not(:disabled) { color: var(--color-heading); }
+.btn--neutral:active:not(:disabled) { box-shadow: var(--shadow-inset-sm); outline: none; }
+
 /* States */
 .btn:disabled {
   cursor: not-allowed;

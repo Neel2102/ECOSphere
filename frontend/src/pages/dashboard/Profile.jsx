@@ -19,6 +19,13 @@ const ROLE_BADGES = {
   client: 'neutral',
 };
 
+const ROLE_LABELS = {
+  admin: 'Organization Admin',
+  manager: 'Department Admin',
+  employee: 'Employee',
+  client: 'Client',
+};
+
 const initialsOf = (name = '') =>
   name
     .split(' ')
@@ -144,7 +151,7 @@ function Profile() {
           <div className="profile__identity">
             <h1 className="profile__name">{user.fullName}</h1>
             <p className="profile__email">{user.email}</p>
-            <Badge variant={ROLE_BADGES[user.role]}>{user.role}</Badge>
+            <Badge variant={ROLE_BADGES[user.role]}>{ROLE_LABELS[user.role] || user.role}</Badge>
           </div>
 
           {!editing && (
@@ -183,7 +190,7 @@ function Profile() {
                 error={errors.phone}
               />
               <Input label="Email" value={user.email} disabled hint="Email can never be changed." />
-              <Input label="Role" value={user.role} disabled hint="Roles are managed by admins." />
+              <Input label="Role" value={ROLE_LABELS[user.role] || user.role} disabled hint="Roles are managed by admins." />
             </div>
             <div className="profile__actions">
               <Button variant="secondary" type="button" onClick={cancelEditing} disabled={saving}>
@@ -210,7 +217,7 @@ function Profile() {
             </div>
             <div className="profile__detail">
               <dt>Role</dt>
-              <dd className="profile__detail-role">{user.role}</dd>
+              <dd className="profile__detail-role">{ROLE_LABELS[user.role] || user.role}</dd>
             </div>
           </dl>
         )}

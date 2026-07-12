@@ -57,14 +57,15 @@
   font-size: 13px;
   color: var(--color-text);
   border-bottom: 1px solid var(--color-surface-dim);
-  white-space: nowrap;
+  white-space: normal; /* Allow wrapping of cells for description, long title, etc. */
+  word-break: break-word;
 }
 
 .tbl__row:last-child .tbl__td { border-bottom: none; }
 
 .tbl__td--right { text-align: right; }
 .tbl__td--center { text-align: center; }
-.tbl__td--check { width: 48px; }
+.tbl__td--check { width: 48px; white-space: nowrap; }
 .tbl__td--empty { padding: 0; }
 
 .tbl__row {

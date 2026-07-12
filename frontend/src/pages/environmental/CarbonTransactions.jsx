@@ -139,7 +139,7 @@ function CarbonTransactions() {
       {error && <div className="page-error">⚠️ {error}</div>}
       
       <Card flat padding="none" className="carbon-card">
-        <div className="carbon-toolbar">
+        <div className="module-toolbar">
           <div className="module-filter">
             <Icon name="filter" size={16} className="module-filter-icon" />
             <input

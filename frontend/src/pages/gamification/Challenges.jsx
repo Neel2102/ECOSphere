@@ -79,24 +79,48 @@ function Challenges() {
       {error && <div className="page-error">⚠️ {error}</div>}
 
       {/* Status pipeline */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', background: 'var(--color-surface)', padding: 8, borderRadius: 12, boxShadow: 'var(--shadow-raised-sm)' }}>
         <button
-          className={`module-tab${activeStatus === '' ? ' is-active' : ''}`}
-          style={{ flex: 1, minWidth: 80 }}
+          className={`status-pipeline-btn${activeStatus === '' ? ' is-active' : ''}`}
+          style={{
+            flex: 1,
+            minWidth: 80,
+            padding: '8px 12px',
+            fontSize: 12.5,
+            fontWeight: activeStatus === '' ? 'bold' : '500',
+            borderRadius: 8,
+            color: activeStatus === '' ? 'var(--color-white)' : 'var(--color-text-soft)',
+            background: activeStatus === '' ? 'var(--color-secondary)' : 'transparent',
+            transition: 'all var(--transition-fast)',
+          }}
           onClick={() => setActiveStatus('')}
         >
           All
         </button>
-        {STATUSES.map((s) => (
-          <button
-            key={s}
-            className={`module-tab${activeStatus === s ? ' is-active' : ''}`}
-            style={{ flex: 1, minWidth: 80, background: activeStatus === s ? STATUS_COLORS[s] : undefined }}
-            onClick={() => setActiveStatus(s)}
-          >
-            {s.replace(/_/g, ' ')} {countFor(s) > 0 ? `(${countFor(s)})` : ''}
-          </button>
-        ))}
+        {STATUSES.map((s) => {
+          const isActive = activeStatus === s;
+          const themeColor = STATUS_COLORS[s] || 'var(--color-neutral)';
+          return (
+            <button
+              key={s}
+              className={`status-pipeline-btn${isActive ? ' is-active' : ''}`}
+              style={{
+                flex: 1,
+                minWidth: 80,
+                padding: '8px 12px',
+                fontSize: 12.5,
+                fontWeight: isActive ? 'bold' : '500',
+                borderRadius: 8,
+                color: isActive ? 'var(--color-white)' : 'var(--color-text-soft)',
+                background: isActive ? themeColor : 'transparent',
+                transition: 'all var(--transition-fast)',
+              }}
+              onClick={() => setActiveStatus(s)}
+            >
+              <span style={{ textTransform: 'capitalize' }}>{s.replace(/_/g, ' ')}</span> {countFor(s) > 0 ? `(${countFor(s)})` : ''}
+            </button>
+          );
+        })}
       </div>
 
       <div className="module-toolbar">

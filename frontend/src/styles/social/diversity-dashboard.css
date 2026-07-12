@@ -1,2 +1,20 @@
 /* EcoSphere - Diversity Dashboard page styles
    Owner: kavya | Implemented in Phase 3 */
+
+.diversity-totals-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .diversity-totals-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .diversity-totals-grid {
+    grid-template-columns: 1fr;
+  }
+}

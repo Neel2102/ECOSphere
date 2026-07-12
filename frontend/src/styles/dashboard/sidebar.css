@@ -40,18 +40,21 @@
 .sidebar__header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 18px 16px 16px;
+  justify-content: center;
+  padding: 24px 16px;
   text-decoration: none;
   border-bottom: 1px solid var(--color-surface-dim);
   flex-shrink: 0;
 }
 
 .sidebar__logo-img {
-  width: 200px;
+  max-width: 100%;
+  max-height: 80px;
+  width: auto;
   height: auto;
   flex-shrink: 0;
   object-fit: contain;
+  transition: all var(--transition);
 }
 
 .sidebar__app-name {
@@ -59,7 +62,7 @@
 }
 
 .sidebar.is-collapsed .sidebar__logo-img {
-  width: 36px;
+  max-height: 32px;
 }
 
 /* ---- Nav ---- */
@@ -102,7 +105,7 @@
   background: linear-gradient(90deg, var(--color-secondary-soft), rgba(0,184,255,0.05));
   color: var(--color-secondary);
   font-weight: 600;
-  border-right: 3px solid var(--color-secondary);
+  border-left: 3px solid var(--color-secondary);
 }
 
 .sidebar__link-icon {

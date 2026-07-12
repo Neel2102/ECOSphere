@@ -35,7 +35,7 @@ function DiversityDashboard() {
       {error && <div className="page-error">⚠️ {error}</div>}
 
       {/* Overall totals */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 16, marginBottom: 24 }}>
+      <div className="diversity-totals-grid" style={{ marginBottom: 24 }}>
         {['total', 'male', 'female', 'other', 'unspecified'].map((key) => (
           <div key={key} className="dash-score-card">
             <div className="dash-score-card__label" style={{ textTransform: 'capitalize' }}>{key}</div>

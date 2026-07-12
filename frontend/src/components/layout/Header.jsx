@@ -192,7 +192,14 @@ function Header({ onOpenMobileSidebar }) {
               <div className="header__menu-info">
                 <strong>{user?.fullName}</strong>
                 <span>{user?.email}</span>
-                <span className="header__menu-role">{user?.role}</span>
+                <span className="header__menu-role">
+                  {{
+                    admin: 'Organization Admin',
+                    manager: 'Department Admin',
+                    employee: 'Employee',
+                    client: 'Client',
+                  }[user?.role] || user?.role}
+                </span>
               </div>
               <Link
                 to="/dashboard/profile"

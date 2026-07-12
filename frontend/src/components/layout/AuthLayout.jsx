@@ -7,10 +7,7 @@ function AuthLayout({ title, subtitle, footer, children, wide = false }) {
   return (
     <div className="auth-layout">
       <Link to="/login" className="auth-layout__brand">
-        <span className="auth-layout__logo" aria-hidden="true">
-          U<span className="auth-layout__logo-dot" />
-        </span>
-        <span className="auth-layout__name">Unify</span>
+        <img src="/images/Transparent_ESG_logo.png" alt="EcoSphere" className="auth-layout__logo-img" />
       </Link>
 
       <Card className={`auth-layout__card${wide ? ' auth-layout__card--wide' : ''}`} padding="lg">

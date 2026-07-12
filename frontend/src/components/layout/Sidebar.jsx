@@ -95,8 +95,7 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile, onToggleCollapsed }) {
       >
         {/* Brand */}
         <NavLink to="/dashboard" className="sidebar__header" onClick={onCloseMobile}>
-          <span className="sidebar__logo" aria-hidden="true">E</span>
-          <span className="sidebar__app-name">EcoSphere</span>
+          <img src="/images/Transparent_ESG_logo.png" alt="EcoSphere" className="sidebar__logo-img" />
         </NavLink>
 
         <nav className="sidebar__nav" aria-label="Main navigation">

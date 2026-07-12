@@ -15,37 +15,10 @@
   gap: 10px;
 }
 
-.auth-layout__logo {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  font-family: var(--font-sidebar);
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--color-white);
-  background: var(--color-accent);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-raised-sm);
-}
-
-.auth-layout__logo-dot {
-  position: absolute;
-  right: 7px;
-  bottom: 8px;
-  width: 7px;
-  height: 7px;
-  border-radius: var(--radius-pill);
-  background: var(--color-secondary);
-}
-
-.auth-layout__name {
-  font-family: var(--font-sidebar);
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--color-heading);
+.auth-layout__logo-img {
+  height: auto;
+  width: 270px;
+  object-fit: contain;
 }
 
 .auth-layout__card {

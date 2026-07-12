@@ -47,36 +47,19 @@
   flex-shrink: 0;
 }
 
-.sidebar__logo {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 800;
+.sidebar__logo-img {
+  width: 200px;
+  height: auto;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 184, 255, 0.35);
+  object-fit: contain;
 }
 
 .sidebar__app-name {
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-weight: 700;
-  font-size: 17px;
-  color: var(--color-heading);
-  white-space: nowrap;
-  overflow: hidden;
-  opacity: 1;
-  transition: opacity var(--transition);
+  display: none;
 }
 
-.sidebar.is-collapsed .sidebar__app-name {
-  opacity: 0;
-  width: 0;
+.sidebar.is-collapsed .sidebar__logo-img {
+  width: 36px;
 }
 
 /* ---- Nav ---- */

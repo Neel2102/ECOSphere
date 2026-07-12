@@ -2,7 +2,7 @@ const { query } = require('../config/db');
 
 // Columns safe to expose to clients (never the hash, OTP or reset token).
 const PUBLIC_COLUMNS =
-  'id, full_name, email, phone, role, profile_image_path, is_verified, created_at, updated_at';
+  'id, full_name, email, phone, role, profile_image_path, is_verified, department_id, gender, created_at, updated_at';
 
 async function create({ fullName, email, passwordHash, phone, role, otpCode, otpExpiresAt }) {
   const { rows } = await query(
@@ -85,7 +85,47 @@ async function updateProfileImage(id, imagePath) {
 }
 
 async function listAll() {
-  const { rows } = await query(`SELECT ${PUBLIC_COLUMNS} FROM users ORDER BY created_at DESC`);
+  const { rows } = await query(
+    `SELECT u.id, u.full_name, u.email, u.phone, u.role, u.profile_image_path,
+            u.is_verified, u.department_id, u.gender, u.created_at, u.updated_at,
+            d.name AS department_name
+     FROM users u
+     LEFT JOIN departments d ON d.id = u.department_id
+     ORDER BY u.created_at DESC`
+  );
+  return rows;
+}
+
+// Admin-only assignment of role / department / diversity data.
+async function adminUpdate(id, { role, departmentId, gender }) {
+  const { rows } = await query(
+    `UPDATE users
+     SET role = COALESCE($2, role),
+         department_id = COALESCE($3, department_id),
+         gender = COALESCE($4, gender),
+         updated_at = NOW()
+     WHERE id = $1
+     RETURNING ${PUBLIC_COLUMNS}`,
+    [id, role ?? null, departmentId ?? null, gender ?? null]
+  );
+  return rows[0] || null;
+}
+
+// Gender counts per department (diversity dashboard).
+async function diversityByDepartment() {
+  const { rows } = await query(
+    `SELECT d.id AS department_id, d.name AS department_name,
+            COUNT(u.id)::int AS total,
+            COUNT(*) FILTER (WHERE u.gender = 'male')::int AS male,
+            COUNT(*) FILTER (WHERE u.gender = 'female')::int AS female,
+            COUNT(*) FILTER (WHERE u.gender = 'other')::int AS other,
+            COUNT(*) FILTER (WHERE u.gender IS NULL)::int AS unspecified
+     FROM departments d
+     LEFT JOIN users u ON u.department_id = d.id AND u.is_verified
+     WHERE d.status = 'active'
+     GROUP BY d.id, d.name
+     ORDER BY d.name`
+  );
   return rows;
 }
 
@@ -100,4 +140,6 @@ module.exports = {
   updateProfile,
   updateProfileImage,
   listAll,
+  adminUpdate,
+  diversityByDepartment,
 };

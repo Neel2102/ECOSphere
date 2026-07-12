@@ -17,6 +17,9 @@ const toPublicUser = (user) => ({
   role: user.role,
   profileImagePath: user.profile_image_path,
   isVerified: user.is_verified,
+  departmentId: user.department_id ?? null,
+  departmentName: user.department_name ?? null,
+  gender: user.gender ?? null,
   createdAt: user.created_at,
 });
 

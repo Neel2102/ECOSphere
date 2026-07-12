@@ -2,3 +2,5 @@ node_modules/
 .env
 src/uploads/profile-images/*
 !src/uploads/profile-images/.gitkeep
+src/uploads/evidence/*
+!src/uploads/evidence/.gitkeep

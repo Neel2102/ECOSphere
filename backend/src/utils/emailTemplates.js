@@ -45,4 +45,17 @@ function passwordResetEmail(fullName, otp) {
   };
 }
 
-module.exports = { verificationEmail, passwordResetEmail };
+// Generic notification email used by the notification service.
+function notificationEmail(fullName, title, message) {
+  return {
+    subject: `EcoSphere: ${title}`,
+    html: baseLayout(
+      title,
+      `<p style="font-size:14px;">Hi ${fullName},</p>
+       <p style="font-size:14px;">${message || ''}</p>
+       <p style="font-size:13px;color:#7d8593;">Open EcoSphere to see the details.</p>`
+    ),
+  };
+}
+
+module.exports = { verificationEmail, passwordResetEmail, notificationEmail };
